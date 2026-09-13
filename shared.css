@@ -145,3 +145,24 @@ footer.note{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;fo
 [hidden]{display:none!important}
 
 .mtimer{display:inline-block;font-family:var(--mono);font-size:12.5px;background:var(--surface2);border:1px solid var(--line);border-radius:20px;padding:4px 12px;color:var(--muted);margin-bottom:12px}
+
+/* 上午/下午分場統計 */
+.session-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:640px){.session-grid{grid-template-columns:1fr}}
+.roster-box .rb-head{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.roster-box .rb-count{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--accent);background:var(--accent-soft);padding:2px 10px;border-radius:20px;font-weight:700}
+
+/* 登入頁的上午/下午場切換 */
+.sesrow{display:flex;gap:8px;margin:12px 0}
+.sesbtn{flex:1;padding:10px 8px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);font-family:var(--sans);font-size:13px;font-weight:700;cursor:pointer;line-height:1.3}
+.sesbtn small{display:block;font-weight:400;font-size:10.5px;opacity:.8;margin-top:1px}
+.sesbtn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* 模組頁頂部：完成按鈕移到最上面，避免被下面大量學員練習淹沒 */
+.mtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.mtop .modbtn{flex:1;min-width:220px}
+.mcount{font-family:var(--mono);font-size:12px;color:var(--accent);background:var(--accent-soft);border-radius:20px;padding:6px 14px;white-space:nowrap}
+
+/* 分頁「顯示更多」 */
+.loadmore{display:block;width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px dashed var(--line);background:var(--surface2);color:var(--muted);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer}
+.loadmore:hover{color:var(--ink);border-color:var(--muted)}

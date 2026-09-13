@@ -20,6 +20,10 @@
     <a href="module3.html">下一個：AI海報 →</a>
   </div>
   <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+  <div class="mtop">
+    <button class="modbtn" data-m="2"><span class="chk"></span><span class="lb">模組2 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+    <span class="mcount" id="moduleCount"></span>
+  </div>
 
   <div class="module" data-m="2">
     <div class="module-head"><span class="m-num">2</span><span class="m-name">AI偵查官的打詐筆記本</span><span class="m-tool">NotebookLM</span></div>
@@ -48,8 +52,6 @@
         <div id="shareWall2"><div class="empty-note">還沒有人分享</div></div>
       </div>
     </div>
-
-    <button class="modbtn" data-m="2" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組2 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -58,6 +60,6 @@ function QRCode(el, opts) { const qr = qrcode(0, 'M'); qr.addData(opts.text); qr
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js"></script>
+<script src="shared.js?v=3"></script>
 </body>
 </html>

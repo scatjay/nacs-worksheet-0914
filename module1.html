@@ -20,6 +20,10 @@
     <a href="module2.html">下一個：NotebookLM →</a>
   </div>
   <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+  <div class="mtop">
+    <button class="modbtn" data-m="1"><span class="chk"></span><span class="lb">模組1 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+    <span class="mcount" id="moduleCount"></span>
+  </div>
 
   <div class="module" data-m="1">
     <div class="module-head"><span class="m-num">1</span><span class="m-name">普朗姆特煉星術（STAR＋五星級提示語）</span><span class="m-tool">ChatGPT / Gemini / Claude</span></div>
@@ -92,13 +96,11 @@ lai659
         <div id="practiceWall"><div class="empty-note">還沒有人分享</div></div>
       </div>
     </div>
-
-    <button class="modbtn" data-m="1" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組1 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js"></script>
+<script src="shared.js?v=3"></script>
 </body>
 </html>

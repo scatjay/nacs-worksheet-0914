@@ -9,11 +9,16 @@
 <body>
 <div id="gate" hidden>
   <div class="gt">115A02 警佐晉升警正 AI實作</div>
+  <p style="font-size:12.5px;color:var(--muted);margin:-6px 0 12px">授課：<b style="color:var(--ink)">楊智傑</b> 老師 ｜ 南臺科技大學多媒體與電腦娛樂科學系副教授 ｜ 府城人文遊戲實驗室主持人</p>
   <div id="qrcode" style="margin:12px auto"></div>
   <p style="font-size:12px;color:var(--muted);margin:0 0 14px">📱 手機掃這個QR，直接開啟本頁</p>
   <input type="password" id="gatePass" placeholder="通關密碼" inputmode="numeric" style="margin-bottom:10px">
   <input id="inName" placeholder="暱稱（不要用本名）" maxlength="12" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;margin-bottom:10px;text-align:center">
   <input id="inUnit" placeholder="任職單位（例：仁武分局）" maxlength="20" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;text-align:center">
+  <div class="sesrow">
+    <button type="button" class="sesbtn" data-s="am">上午場<small>RP304</small></button>
+    <button type="button" class="sesbtn" data-s="pm">下午場<small>RP303</small></button>
+  </div>
   <button id="gateBtn">進入</button>
   <div class="st" id="gateStatus"></div>
 </div>
@@ -38,16 +43,26 @@
   <section id="roster">
     <div class="sec-head"><h2>1️⃣ 現場動態</h2><span id="connPill" style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">連線中…</span></div>
     <div class="sec-sub">下面是各模組完成人數，跟大家目前的進度。<b style="color:var(--ink)">今天4個模組都要完成</b>，不是做完幾個就好。</div>
-    <div class="roster-box">
-      <div class="progress-row" id="progressRow" style="margin-top:0">
-        <button class="modbtn" data-m="1" onclick="location.href='module1.html'"><span class="chk"></span><span class="lb">模組1<small>STAR提示語（點我前往）</small></span></button>
-        <button class="modbtn" data-m="2" onclick="location.href='module2.html'"><span class="chk"></span><span class="lb">模組2<small>NotebookLM（點我前往）</small></span></button>
-        <button class="modbtn" data-m="3" onclick="location.href='module3.html'"><span class="chk"></span><span class="lb">模組3<small>AI宣傳海報（點我前往）</small></span></button>
-        <button class="modbtn" data-m="4" onclick="location.href='module4.html'"><span class="chk"></span><span class="lb">模組4<small>反思與收穫（點我前往）</small></span></button>
+    <div class="progress-row" id="progressRow" style="margin-top:0">
+      <button class="modbtn" data-m="1" onclick="location.href='module1.html'"><span class="chk"></span><span class="lb">模組1<small>STAR提示語（點我前往）</small></span></button>
+      <button class="modbtn" data-m="2" onclick="location.href='module2.html'"><span class="chk"></span><span class="lb">模組2<small>NotebookLM（點我前往）</small></span></button>
+      <button class="modbtn" data-m="3" onclick="location.href='module3.html'"><span class="chk"></span><span class="lb">模組3<small>AI宣傳海報（點我前往）</small></span></button>
+      <button class="modbtn" data-m="4" onclick="location.href='module4.html'"><span class="chk"></span><span class="lb">模組4<small>反思與收穫（點我前往）</small></span></button>
+    </div>
+    <div class="session-grid">
+      <div class="roster-box">
+        <div class="rb-head">☀️ 上午場 RP304 <span id="countAM" class="rb-count">0 人</span></div>
+        <div id="teacherStatsAM" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px"></div>
+        <div class="roster-list" id="rosterListAM">
+          <div class="empty-note">尚無人加入，或db連線中…</div>
+        </div>
       </div>
-      <div id="teacherStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px"></div>
-      <div class="roster-list" id="rosterList">
-        <div class="empty-note">尚無人加入，或db連線中…</div>
+      <div class="roster-box">
+        <div class="rb-head">🌇 下午場 RP303 <span id="countPM" class="rb-count">0 人</span></div>
+        <div id="teacherStatsPM" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px"></div>
+        <div class="roster-list" id="rosterListPM">
+          <div class="empty-note">尚無人加入，或db連線中…</div>
+        </div>
       </div>
     </div>
   </section>
@@ -96,6 +111,6 @@ function QRCode(el, opts) {
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js"></script>
+<script src="shared.js?v=3"></script>
 </body>
 </html>

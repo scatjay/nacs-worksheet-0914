@@ -15,11 +15,62 @@ if (!myId) {
 }
 let myNickname = '';
 try { myNickname = localStorage.getItem('nacs0914_nickname') || ''; } catch(e) {}
+let mySession = 'am';
+try { mySession = localStorage.getItem('nacs0914_session') || 'am'; } catch(e) {}
 
 const MOD_NAMES = {1:'模組1 STAR', 2:'模組2 NotebookLM', 3:'模組3 海報', 4:'模組4 反思'};
+const SESSION_NAMES = {am:'上午場 RP304', pm:'下午場 RP303'};
 
 function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// 分頁狀態：每個牆各自記住目前顯示到第幾筆，累加式「顯示更多」
+const wallState = {};
+const wallData = {};
+const PAGE_SIZE = 15;
+
+function renderPagedWall(wallId, docs, renderItemFn, emptyMsg) {
+  const wall = document.getElementById(wallId);
+  if (!wall) return;
+  wallData[wallId] = docs;
+  if (!docs.length) {
+    wall.innerHTML = `<div class="empty-note">${emptyMsg}</div>`;
+    return;
+  }
+  if (!wallState[wallId]) wallState[wallId] = PAGE_SIZE;
+  const visible = docs.slice(0, wallState[wallId]);
+  const remain = docs.length - visible.length;
+  wall.innerHTML = visible.map(renderItemFn).join('')
+    + (remain > 0 ? `<button class="loadmore" data-wall="${wallId}">顯示更多（還有 ${remain} 則）</button>` : '');
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.loadmore');
+  if (!btn) return;
+  const wallId = btn.dataset.wall;
+  wallState[wallId] = (wallState[wallId] || PAGE_SIZE) + PAGE_SIZE;
+  const renderers = { rosterList: renderRosterList, reflectWall: rerenderReflect, practiceWall: rerenderGeneric, shareWall2: rerenderGeneric, shareWall3: rerenderGeneric };
+  if (renderers[wallId]) renderers[wallId](wallId);
+});
+
+function rerenderGeneric(wallId) {
+  renderPagedWall(wallId, wallData[wallId] || [], shareCardHtml, '還沒有人分享');
+}
+function rerenderReflect(wallId) {
+  renderPagedWall(wallId, wallData[wallId] || [], reflectCardHtml, '還沒有人填寫');
+}
+function shareCardHtml(d) {
+  return `<div class="rcard"><div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${escapeHtml(d.content||'')}</div></div>`;
+}
+function reflectCardHtml(d) {
+  return `<div class="rcard">
+      <div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div>
+      <div class="rc-row"><b>Reflection</b>${escapeHtml(d.r1||'')}</div>
+      <div class="rc-row"><b>Feeling</b>${escapeHtml(d.r2||'')}</div>
+      <div class="rc-row"><b>Finding</b>${escapeHtml(d.r3||'')}</div>
+      <div class="rc-row"><b>Future</b>${escapeHtml(d.r4||'')}</div>
+    </div>`;
 }
 
 function initQR() {
@@ -30,79 +81,75 @@ function initQR() {
   } catch(e) {}
 }
 
-function renderRoster(data) {
-  const list = document.getElementById('rosterList');
-  const docs = data ? Object.values(data) : [];
-  const statsEl = document.getElementById('teacherStats');
-  if (statsEl) {
-    const counts = {1:0,2:0,3:0,4:0};
-    docs.forEach(d => Object.keys(d.progress||{}).forEach(m => { m = Number(m); if(counts[m]!==undefined) counts[m]++; }));
-    statsEl.innerHTML = [1,2,3,4].map(m => `
-      <div class="tstat"><div class="n">${counts[m]}<small style="font-size:12px;color:var(--muted)">/${docs.length||0}</small></div><div class="l">${MOD_NAMES[m]}</div></div>
-    `).join('');
-  }
-  if (!list) return;
-  if (!docs.length) {
-    list.innerHTML = '<div class="empty-note">目前還沒有人加入現場看板</div>';
-    return;
-  }
-  docs.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
-  list.innerHTML = docs.map(d => {
-    const prog = Object.keys(d.progress||{}).map(Number);
-    const dots = [1,2,3,4].map(m => `<span class="pdot ${prog.includes(m)?'on':''}"></span>`).join('');
-    return `
+let lastRosterDocs = [];
+
+function rosterPersonHtml(d) {
+  const prog = Object.keys(d.progress||{}).map(Number);
+  const dots = [1,2,3,4].map(m => `<span class="pdot ${prog.includes(m)?'on':''}"></span>`).join('');
+  return `
     <div class="rperson">
       <span class="name">${escapeHtml(d.nickname||'')} <span class="status-pill live">●上線</span></span>
       <span class="unit">${escapeHtml(d.unit||'')}</span>
       <span class="task"><span class="progress-dots">${dots}</span></span>
       <span class="ans">${escapeHtml(MOD_NAMES[Math.max(...prog,0)] || '尚未開始')}</span>
     </div>`;
-  }).join('');
 }
 
-function renderShareWall(data, wallId) {
-  const wall = document.getElementById(wallId);
-  if (!wall) return;
-  const docs = data ? Object.values(data) : [];
-  if (!docs.length) {
-    wall.innerHTML = '<div class="empty-note">還沒有人分享</div>';
-    return;
-  }
-  docs.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
-  wall.innerHTML = docs.map(d => `
-    <div class="rcard">
-      <div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div>
-      <div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${escapeHtml(d.content||'')}</div>
-    </div>
+function renderRosterList(wallId) {
+  renderPagedWall(wallId, wallData[wallId] || [], rosterPersonHtml, '目前還沒有人加入現場看板');
+}
+
+function statsHtml(docs) {
+  const counts = {1:0,2:0,3:0,4:0};
+  docs.forEach(d => Object.keys(d.progress||{}).forEach(m => { m = Number(m); if(counts[m]!==undefined) counts[m]++; }));
+  return [1,2,3,4].map(m => `
+    <div class="tstat"><div class="n">${counts[m]}<small style="font-size:12px;color:var(--muted)">/${docs.length||0}</small></div><div class="l">${MOD_NAMES[m]}</div></div>
   `).join('');
 }
 
-function renderReflections(data) {
-  const wall = document.getElementById('reflectWall');
-  if (!wall) return;
+function renderRoster(data) {
   const docs = data ? Object.values(data) : [];
-  if (!docs.length) {
-    wall.innerHTML = '<div class="empty-note">還沒有人填寫</div>';
-    return;
-  }
+  lastRosterDocs = docs;
   docs.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
-  wall.innerHTML = docs.map(d => `
-    <div class="rcard">
-      <div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div>
-      <div class="rc-row"><b>Reflection</b>${escapeHtml(d.r1||'')}</div>
-      <div class="rc-row"><b>Feeling</b>${escapeHtml(d.r2||'')}</div>
-      <div class="rc-row"><b>Finding</b>${escapeHtml(d.r3||'')}</div>
-      <div class="rc-row"><b>Future</b>${escapeHtml(d.r4||'')}</div>
-    </div>
-  `).join('');
+  const am = docs.filter(d => d.session !== 'pm');
+  const pm = docs.filter(d => d.session === 'pm');
+
+  const statsAM = document.getElementById('teacherStatsAM');
+  const statsPM = document.getElementById('teacherStatsPM');
+  if (statsAM) statsAM.innerHTML = statsHtml(am);
+  if (statsPM) statsPM.innerHTML = statsHtml(pm);
+  const countAM = document.getElementById('countAM');
+  const countPM = document.getElementById('countPM');
+  if (countAM) countAM.textContent = `${am.length} 人`;
+  if (countPM) countPM.textContent = `${pm.length} 人`;
+
+  if (document.getElementById('rosterListAM')) renderPagedWall('rosterListAM', am, rosterPersonHtml, '上午場目前還沒有人加入');
+  if (document.getElementById('rosterListPM')) renderPagedWall('rosterListPM', pm, rosterPersonHtml, '下午場目前還沒有人加入');
+  // 舊版單一清單相容（若頁面上還留著單一 #rosterList 就用全部人）
+  if (document.getElementById('rosterList')) renderPagedWall('rosterList', docs, rosterPersonHtml, '目前還沒有人加入現場看板');
+}
+
+function renderModuleCount(data) {
+  const modNum = Number(document.body.dataset.module);
+  const el = document.getElementById('moduleCount');
+  if (!modNum || !el) return;
+  const docs = data ? Object.values(data) : [];
+  const done = docs.filter(d => d.progress && d.progress[modNum]);
+  const am = done.filter(d => d.session !== 'pm').length;
+  const pm = done.filter(d => d.session === 'pm').length;
+  el.textContent = `✅ 已完成本模組：上午 ${am} 人／下午 ${pm} 人`;
+}
+
+function docsOf(val) {
+  return val ? Object.values(val).sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0)) : [];
 }
 
 function initListeners() {
-  db.ref(`${ROOT}/roster`).on('value', snap => renderRoster(snap.val()));
-  db.ref(`${ROOT}/reflections`).on('value', snap => renderReflections(snap.val()));
-  db.ref(`${ROOT}/practice_log`).on('value', snap => renderShareWall(snap.val(), 'practiceWall'));
-  db.ref(`${ROOT}/share2`).on('value', snap => renderShareWall(snap.val(), 'shareWall2'));
-  db.ref(`${ROOT}/share3`).on('value', snap => renderShareWall(snap.val(), 'shareWall3'));
+  db.ref(`${ROOT}/roster`).on('value', snap => { const v = snap.val(); renderRoster(v); renderModuleCount(v); });
+  db.ref(`${ROOT}/reflections`).on('value', snap => renderPagedWall('reflectWall', docsOf(snap.val()), reflectCardHtml, '還沒有人填寫'));
+  db.ref(`${ROOT}/practice_log`).on('value', snap => renderPagedWall('practiceWall', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
+  db.ref(`${ROOT}/share2`).on('value', snap => renderPagedWall('shareWall2', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
+  db.ref(`${ROOT}/share3`).on('value', snap => renderPagedWall('shareWall3', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
   const pill = document.getElementById('connPill');
   if (pill) pill.textContent = '● 即時連線中';
 }
@@ -111,10 +158,12 @@ function logout() {
   try {
     localStorage.removeItem('nacs0914_myid');
     localStorage.removeItem('nacs0914_nickname');
+    localStorage.removeItem('nacs0914_session');
     localStorage.removeItem('nacs0914_gate_ok'); // 換人要重新走一次密碼+暱稱畫面
   } catch(e) {}
   location.href = 'index.html';
 }
+window.logout = logout;
 
 function setupJoin() {
   const btn = document.getElementById('btnJoin');
@@ -261,6 +310,15 @@ function initGate() {
   const status = document.getElementById('gateStatus');
   const nameInput = document.getElementById('inName');
   const unitInput = document.getElementById('inUnit');
+  const sesBtns = document.querySelectorAll('.sesbtn');
+  let selectedSession = 'am';
+  sesBtns.forEach(b => {
+    b.classList.toggle('active', b.dataset.s === selectedSession);
+    b.addEventListener('click', () => {
+      selectedSession = b.dataset.s;
+      sesBtns.forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
   const tryEnter = () => {
     if ((input.value || '').trim() !== GATE_CODE) {
       status.textContent = '密碼不對，請問講師';
@@ -275,8 +333,12 @@ function initGate() {
       const nickname = nameInput.value.trim();
       const unit = (unitInput && unitInput.value.trim()) || '';
       myNickname = nickname;
-      try { localStorage.setItem('nacs0914_nickname', nickname); } catch(e) {}
-      db.ref(`${ROOT}/roster/${myId}`).update({ nickname, unit, updatedAt: Date.now() });
+      mySession = selectedSession;
+      try {
+        localStorage.setItem('nacs0914_nickname', nickname);
+        localStorage.setItem('nacs0914_session', mySession);
+      } catch(e) {}
+      db.ref(`${ROOT}/roster/${myId}`).update({ nickname, unit, session: mySession, updatedAt: Date.now() });
     }
     gate.hidden = true; content.hidden = false;
   };
