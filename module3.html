@@ -68,9 +68,9 @@
     <div class="m-hub">▷ <a href="https://padlet.com/scatjay/115a02-ai-s023jfvlxwjsq6kfif3j" target="_blank">上傳你的海報到「115A02 政策宣導海報」看板</a></div>
 
     <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
-      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🎨 這裡也留一句話</div>
-      <div class="m-desc">圖傳去Padlet了，這裡順手寫一句：你選了哪個風格、主題做了什麼？不用等開Padlet也能在這頁看到大家選了什麼。可以重複分享。</div>
-      <textarea id="shareInput3" placeholder="例如：我選了熱血動漫風，做了防詐宣導海報" style="width:100%;min-height:70px;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical"></textarea>
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🎨 分享你的生圖對話串</div>
+      <div class="m-desc">在ChatGPT對話右上角點【分享】產生連結，把連結貼在這裡，讓大家可以直接點開看你怎麼下指令的。可以重複分享。</div>
+      <input type="url" id="shareInput3" placeholder="貼上ChatGPT分享的對話連結（https://chatgpt.com/share/...）" style="width:100%;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px">
       <button id="btnShare3" style="margin-top:10px;padding:9px 18px;border-radius:8px;border:0;background:var(--mc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">送出分享（可重複送出）</button>
       <div id="shareStatus3" style="font-size:12.5px;color:var(--muted);margin-top:8px"></div>
       <div class="wall-teaser">
@@ -86,6 +86,6 @@ function QRCode(el, opts) { const qr = qrcode(0, 'M'); qr.addData(opts.text); qr
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js?v=5"></script>
+<script src="shared.js?v=6"></script>
 </body>
 </html>

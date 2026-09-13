@@ -25,6 +25,16 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+// 對已escape過的文字做連結化，讓貼上的網址可以直接點擊
+function linkify(escapedText){
+  return escapedText.replace(/(https?:\/\/[^\s<]+)/g, url => {
+    const m = url.match(/^(.*?)([.,;:!?)）]*)$/);
+    const core = m ? m[1] : url;
+    const trail = m ? m[2] : '';
+    return `<a href="${core}" target="_blank" rel="noopener">${core}</a>${trail}`;
+  });
+}
+
 // 分頁狀態：每個牆各自記住目前顯示到第幾筆，累加式「顯示更多」
 const wallState = {};
 const wallData = {};
@@ -66,7 +76,7 @@ function rerenderReflect(wallId) {
   renderPagedWall(wallId, wallData[wallId] || [], reflectCardHtml, '還沒有人填寫');
 }
 function shareCardHtml(d) {
-  return `<div class="rcard"><div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${escapeHtml(d.content||'')}</div></div>`;
+  return `<div class="rcard"><div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div></div>`;
 }
 function reflectCardHtml(d) {
   return `<div class="rcard">
@@ -78,7 +88,7 @@ function reflectCardHtml(d) {
     </div>`;
 }
 function shareCardHtmlNumbered(d, i) {
-  return `<div class="rcard"><div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${escapeHtml(d.content||'')}</div></div>`;
+  return `<div class="rcard"><div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div></div>`;
 }
 function reflectCardHtmlNumbered(d, i) {
   return `<div class="rcard">
