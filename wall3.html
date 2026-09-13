@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>模組3 海報主題分享牆 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=2">
+<link rel="stylesheet" href="shared.css?v=3">
 </head>
 <body data-wallpath="share3">
 <div id="gate" hidden>
@@ -25,12 +25,16 @@
       <h1>🎨 大家選的風格與主題</h1>
       <span class="wallpage-count" id="wallFullCount">載入中…</span>
     </div>
-    <div class="wallpage-desc">依送出先後編號，#1 是最早送出的。海報圖檔在Padlet看，這裡是文字分享。想再補一筆，回<a href="module3.html" style="color:var(--m3);font-weight:700">模組3</a>頁面下方送出即可。</div>
+    <div class="wallpage-desc">依送出先後編號，#1 是最早送出的。海報圖檔在Padlet看，這裡是文字分享。AI會自動幫每則作品評星等、給建議，做得好的會被選進精選區。想再補一筆，回<a href="module3.html" style="color:var(--m3);font-weight:700">模組3</a>頁面下方送出即可。</div>
+    <div class="featured-section" id="featuredSection" hidden>
+      <h3>🌟 精選作品</h3>
+      <div id="wallFeatured"></div>
+    </div>
     <div id="wallFull"><div class="empty-note">還沒有人分享</div></div>
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js?v=6"></script>
+<script src="shared.js?v=7"></script>
 </body>
 </html>

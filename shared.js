@@ -65,7 +65,7 @@ document.addEventListener('click', e => {
   if (!btn) return;
   const wallId = btn.dataset.wall;
   wallState[wallId] = (wallState[wallId] || PAGE_SIZE) + PAGE_SIZE;
-  const renderers = { rosterList: renderRosterList, reflectWall: rerenderReflect, practiceWall: rerenderGeneric, shareWall2: rerenderGeneric, shareWall3: rerenderGeneric, wallFull: rerenderWallFull };
+  const renderers = { rosterList: renderRosterList, reflectWall: rerenderReflect, practiceWall: rerenderGeneric, shareWall2: rerenderGeneric, shareWall3: rerenderGeneric, wallFull: renderWallWithScreening };
   if (renderers[wallId]) renderers[wallId](wallId);
 });
 
@@ -75,8 +75,17 @@ function rerenderGeneric(wallId) {
 function rerenderReflect(wallId) {
   renderPagedWall(wallId, wallData[wallId] || [], reflectCardHtml, '還沒有人填寫');
 }
+function starsHtml(n) {
+  n = Math.max(0, Math.min(5, Number(n) || 0));
+  return '⭐'.repeat(n) + '☆'.repeat(5 - n);
+}
+function screeningBlock(d) {
+  const s = d._screening;
+  if (!s || !s.stars) return '';
+  return `<div class="ai-feedback"><span class="ai-stars">${starsHtml(s.stars)}</span>${s.suggestion ? `<span class="ai-note">${escapeHtml(s.suggestion)}</span>` : ''}</div>`;
+}
 function shareCardHtml(d) {
-  return `<div class="rcard"><div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div></div>`;
+  return `<div class="rcard"><div class="rc-head">${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div>${screeningBlock(d)}</div>`;
 }
 function reflectCardHtml(d) {
   return `<div class="rcard">
@@ -88,7 +97,10 @@ function reflectCardHtml(d) {
     </div>`;
 }
 function shareCardHtmlNumbered(d, i) {
-  return `<div class="rcard"><div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div></div>`;
+  return `<div class="rcard"><div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div>${screeningBlock(d)}</div>`;
+}
+function featuredCardHtml(d) {
+  return `<div class="rcard featured"><div class="rc-head"><span class="featured-badge">🌟精選</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${linkify(escapeHtml(d.content||''))}</div>${screeningBlock(d)}</div>`;
 }
 function reflectCardHtmlNumbered(d, i) {
   return `<div class="rcard">
@@ -100,25 +112,45 @@ function reflectCardHtmlNumbered(d, i) {
     </div>`;
 }
 
-function rerenderWallFull(wallId) {
+let _wallRawDocs = [];
+let _wallScreening = {};
+
+function renderWallWithScreening() {
   const path = document.body.dataset.wallpath;
   const isReflect = path === 'reflections';
-  renderPagedWall('wallFull', wallData['wallFull'] || [], isReflect ? reflectCardHtmlNumbered : shareCardHtmlNumbered, isReflect ? '還沒有人填寫' : '還沒有人分享');
+  const cardFn = isReflect ? reflectCardHtmlNumbered : shareCardHtmlNumbered;
+  const emptyMsg = isReflect ? '還沒有人填寫' : '還沒有人分享';
+  const docs = _wallRawDocs.map(d => ({...d, _screening: _wallScreening[d._id]}));
+  docs.sort((a,b) => (a.updatedAt||0) - (b.updatedAt||0)); // 依送出先後排序、從第一筆開始編號
+  renderPagedWall('wallFull', docs, cardFn, emptyMsg);
+  const countEl = document.getElementById('wallFullCount');
+  if (countEl) countEl.textContent = `共 ${docs.length} 則`;
+  const featuredEl = document.getElementById('wallFeatured');
+  const featuredSection = document.getElementById('featuredSection');
+  if (featuredEl && !isReflect) {
+    const featured = docs.filter(d => d._screening && d._screening.stars >= 4)
+      .sort((a,b) => (b._screening.stars - a._screening.stars) || ((b.updatedAt||0) - (a.updatedAt||0)))
+      .slice(0, 6);
+    featuredEl.innerHTML = featured.map(featuredCardHtml).join('');
+    if (featuredSection) featuredSection.hidden = !featured.length;
+  }
 }
 
 function initWallPage() {
   const path = document.body.dataset.wallpath;
   if (!path) return;
   const isReflect = path === 'reflections';
-  const cardFn = isReflect ? reflectCardHtmlNumbered : shareCardHtmlNumbered;
-  const emptyMsg = isReflect ? '還沒有人填寫' : '還沒有人分享';
   db.ref(`${ROOT}/${path}`).on('value', snap => {
-    const docs = snap.val() ? Object.values(snap.val()) : [];
-    docs.sort((a,b) => (a.updatedAt||0) - (b.updatedAt||0)); // 依送出先後排序、從第一筆開始編號
-    renderPagedWall('wallFull', docs, cardFn, emptyMsg);
-    const countEl = document.getElementById('wallFullCount');
-    if (countEl) countEl.textContent = `共 ${docs.length} 則`;
+    const val = snap.val() || {};
+    _wallRawDocs = Object.entries(val).map(([id, v]) => ({...v, _id: id}));
+    renderWallWithScreening();
   });
+  if (!isReflect) {
+    db.ref(`${ROOT}/screening/${path}`).on('value', snap => {
+      _wallScreening = snap.val() || {};
+      renderWallWithScreening();
+    });
+  }
 }
 
 function initQR() {
