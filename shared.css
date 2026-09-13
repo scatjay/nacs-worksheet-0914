@@ -141,7 +141,7 @@ footer.note{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;fo
 #gate{max-width:340px;margin:80px auto;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;box-shadow:var(--shadow)}
 #gate .gt{font-weight:800;font-size:16px;margin-bottom:14px}
 #gate input{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:20px;text-align:center;letter-spacing:.1em}
-#gate button{width:100%;margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}
+#gate button:not(.sesbtn){width:100%;margin-top:10px;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}
 #gate .st{font-size:12px;color:var(--seal);margin-top:8px;min-height:16px}
 [hidden]{display:none!important}
 
