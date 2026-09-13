@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>115A02 警佐晉升警正 AI實作</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <header class="top">
+    <p class="eyebrow">文官學院 · 人工智慧實作</p>
+    <h1>警佐晉升警正官等訓練</h1>
+    <p style="font-size:13.5px;color:var(--muted);margin-top:6px">授課：<b style="color:var(--ink)">楊智傑</b> 老師 ｜ 南臺科技大學多媒體與電腦娛樂科學系副教授 ｜ 府城人文遊戲實驗室主持人</p>
+    <div class="meta-row">
+      <span><b>2026-09-14</b></span>
+      <span>RP304 上午 09:10–12:00</span>
+      <span>RP303 下午 13:30–16:20</span>
+    </div>
+    <div class="reslinks">
+      <a class="reslink" href="https://glamorous-glass-0c7.notion.site/1d243d219c1b8008985eed5c656abe67" target="_blank"><span class="ic">📋</span><span class="tx"><span class="tt">講座指引</span><span class="dd">官方課程說明</span></span></a>
+      <a class="reslink" href="https://glamorous-glass-0c7.notion.site/HUB-1eb43d219c1b801a9c67ce90f91ebd17" target="_blank"><span class="ic">🔮</span><span class="tx"><span class="tt">普朗姆特煉星術 HUB</span><span class="dd">提示語總表</span></span></a>
+      <a class="reslink" href="https://drive.google.com/drive/folders/106ghrHC9YauHKrcINgOjDrhm2a016r8M" target="_blank"><span class="ic">📁</span><span class="tx"><span class="tt">簡報下載</span><span class="dd">官方教材原檔</span></span></a>
+    </div>
+  </header>
+
+  <section id="roster">
+    <div class="sec-head"><h2>1️⃣ 先加入現場動態</h2><span id="connPill" style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">連線中…</span></div>
+    <div class="sec-sub"><b style="color:var(--seal)">請用暱稱，不要用本名</b>；任職單位可以填。加入之後，下面4個模組完成人數大家都看得到。<b style="color:var(--ink)">今天4個模組都要完成</b>，不是做完幾個就好。</div>
+    <div class="qrbox">
+      <div id="qrcode"></div>
+      <div class="qrtxt"><b>📱 掃描開啟本頁</b><br>手機掃這個QR，直接開啟學習單首頁。</div>
+    </div>
+    <div class="roster-box">
+      <div class="join-row" id="joinRow">
+        <input id="inName" placeholder="暱稱（例：巡邏王，不要用本名）" maxlength="12">
+        <input id="inUnit" placeholder="任職單位（例：仁武分局）" maxlength="20">
+        <button id="btnJoin">加入現場看板</button>
+      </div>
+      <div class="progress-row" id="progressRow" hidden style="margin-top:14px">
+        <button class="modbtn" data-m="1" onclick="location.href='module1.html'"><span class="chk"></span><span class="lb">模組1<small>STAR提示語（點我前往）</small></span></button>
+        <button class="modbtn" data-m="2" onclick="location.href='module2.html'"><span class="chk"></span><span class="lb">模組2<small>NotebookLM（點我前往）</small></span></button>
+        <button class="modbtn" data-m="3" onclick="location.href='module3.html'"><span class="chk"></span><span class="lb">模組3<small>AI宣傳海報（點我前往）</small></span></button>
+        <button class="modbtn" data-m="4" onclick="location.href='module4.html'"><span class="chk"></span><span class="lb">模組4<small>反思與收穫（點我前往）</small></span></button>
+      </div>
+      <div id="teacherStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px"></div>
+      <div class="roster-list" id="rosterList">
+        <div class="empty-note">尚無人加入，或db連線中…</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="modules">
+    <div class="sec-head"><h2>2️⃣ 今天的4個模組</h2></div>
+    <div class="sec-sub">照本梯官方教學設計順序操作，每個模組是獨立一頁，做完再回來看進度。</div>
+    <div class="navgrid">
+      <a class="navcard" data-m="1" href="module1.html">
+        <div class="nc-num">01</div>
+        <div class="nc-name">普朗姆特煉星術</div>
+        <div class="nc-tool">STAR提示語 · ChatGPT/Gemini/Claude</div>
+      </a>
+      <a class="navcard" data-m="2" href="module2.html">
+        <div class="nc-num">02</div>
+        <div class="nc-name">AI偵查官的打詐筆記本</div>
+        <div class="nc-tool">NotebookLM podcast</div>
+      </a>
+      <a class="navcard" data-m="3" href="module3.html">
+        <div class="nc-num">03</div>
+        <div class="nc-name">AI宣傳官的祕密武器</div>
+        <div class="nc-tool">ChatGPT 生圖</div>
+      </a>
+      <a class="navcard" data-m="4" href="module4.html">
+        <div class="nc-num">04</div>
+        <div class="nc-name">反思與收穫</div>
+        <div class="nc-tool">AAAK四問</div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="note">
+    本頁直接對照115A02官方教學設計順序製作，提示語內容以講座指引【普朗姆特煉星術HUB】現場提供為準；本課程教學設計智慧財產權屬國家文官學院所有。
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+// qrcode-generator 是 function 形式，這裡包一層相容 shared.js 的 new QRCode(...) 呼叫
+function QRCode(el, opts) {
+  const qr = qrcode(0, 'M');
+  qr.addData(opts.text);
+  qr.make();
+  el.innerHTML = qr.createImgTag(4);
+}
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

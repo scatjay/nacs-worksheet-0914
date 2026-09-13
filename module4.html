@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模組4 反思與收穫 · 115A02</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-module="4">
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <div class="pagenav">
+    <a href="index.html">← 返回總覽</a>
+    <span class="pill" style="--mc:var(--m4);--mcs:var(--m4-soft)">模組 4 / 4</span>
+    <a href="index.html">完成，回總覽 →</a>
+  </div>
+  <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+
+  <div class="module" data-m="4">
+    <div class="module-head"><span class="m-num">4</span><span class="m-name">反思與收穫</span><span class="m-tool">AAAK四問</span></div>
+    <div class="m-desc">REFLECTION／FEELING／FINDING／FUTURE——填完按送出，全班都看得到彼此寫的內容（用你加入現場動態時的暱稱顯示）。</div>
+    <div class="reflect-form">
+      <div class="rfield"><label>REFLECTION 課程哪個任務印象深刻？為什麼？</label><textarea id="rf1" placeholder="STAR／NotebookLM／海報……"></textarea></div>
+      <div class="rfield"><label>FEELING 對AI有什麼新的認識？</label><textarea id="rf2"></textarea></div>
+      <div class="rfield"><label>FINDING 回到單位後，打算在哪些地方運用AI？</label><textarea id="rf3"></textarea></div>
+      <div class="rfield"><label>FUTURE 還想多學什麼／有什麼建議？</label><textarea id="rf4"></textarea></div>
+      <button class="rf-submit" id="btnReflect">送出，讓大家看到</button>
+    </div>
+    <div class="reflect-wall">
+      <h3>全班的反思牆</h3>
+      <div id="reflectWall"><div class="empty-note">還沒有人填寫</div></div>
+    </div>
+
+    <button class="modbtn" data-m="4" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組4 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+function QRCode(el, opts) { const qr = qrcode(0, 'M'); qr.addData(opts.text); qr.make(); el.innerHTML = qr.createImgTag(4); }
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

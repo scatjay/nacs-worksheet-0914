@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模組1 STAR提示語 · 115A02</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-module="1">
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <div class="pagenav">
+    <a href="index.html">← 返回總覽</a>
+    <span class="pill" style="--mc:var(--m1);--mcs:var(--m1-soft)">模組 1 / 4</span>
+    <a href="module2.html">下一個：NotebookLM →</a>
+  </div>
+  <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+
+  <div class="module" data-m="1">
+    <div class="module-head"><span class="m-num">1</span><span class="m-name">普朗姆特煉星術（STAR＋五星級提示語）</span><span class="m-tool">ChatGPT / Gemini / Claude</span></div>
+    <div class="m-desc">情境：你是派出所員警，分析轄區詐騙報案統計資料。官方三個提示語（#101→#102→#103）直接複製貼上即可，不用再切去HUB找。</div>
+
+    <div class="promptbox" style="border-style:solid;background:var(--mcs)"><span class="plabel">▷ 先搞懂STAR原則（下指令前想這4件事）</span><span class="ptxt" style="font-family:var(--sans)"><b>S 場景脈絡（Situation）</b>：你是誰、在什麼情境下？（例：我是派出所員警，這是2月份的詐騙報案資料）
+<b>T 任務結構（Task）</b>：要AI做什麼、分幾個步驟？（例：一步一步統計→分析關聯→給建議）
+<b>A 具體目標（Aim）</b>：具體要達成什麼結果？（例：3點可執行的打詐建議）
+<b>R 輸出格式（Report）</b>：想要什麼樣的呈現方式？（例：標題＋段落）
+
+四個要素講得越清楚，AI給的答案越不會文不對題——這也是下面每個提示語背後的結構。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 提示語#101（貼給AI開新對話，最簡單版）</span><span class="ptxt">我有一個數據表，請幫我分析這個資料。
+"""
+日期  時間  類型  ID  區域
+2025/2/01 10:08 1 a09274 A
+2025/2/01 22:55 2 h124105222 A
+2025/2/02 21:08 2 h12410 B
+2025/2/07 19:53 2 you639 B
+2025/2/07 15:06 1 a09444 A
+2025/2/08 19:05 2 h12140 B
+2025/2/08 11:32 1 a09779 B
+2025/2/09 16:08 1 a09521 B
+2025/2/23 14:25 1 a09871 A
+2025/2/28 22:30 2 edie68 B
+"""</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 提示語#102（延續同一對話，STAR結構化版）</span><span class="ptxt">我是派出所的員警，這是派出所2025年2月份，來我們派出所報案遇到網路LINE詐騙的統計資料。
+欄位名稱分別是報案日期、報案時間、詐騙案件類型、對方的LINE ID、受害者所在區域。
+請你一步一步來，完成以下分析，用「標題＋段落」的格式輸出分析內容：
+#基本資料統計
+統計不同案件類型、各區域、各星期、報案時間（早上、下午、晚上）的統計。
+#關聯性分析
+分析不同案件類型有沒有偏好的發生區域、報案時間、星期、line id型態
+#未來打詐建議
+依據分析資訊歸納，請提供我3點未來關於轄區內的詐騙的犯罪預防處理建議。
+
+（貼上你自己轄區的報案資料，欄位：日期／時間／類型／LINE ID／區域，沒有真實資料就先用虛構的示範幾筆）</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 提示語#103（延續同一對話，追問更具體建議）</span><span class="ptxt">進一步提供資訊：
+「報案類型」中，1 代表「網路購物詐騙」；2 代表「假買家騙賣家詐騙」。
+「區域」中，A 代表商辦區；B 代表「住商混合區」。
+請提供給我更具體明確的3點轄區內打詐建議。
+
+另外這是「165全民防騙網」公布網購詐騙LINE ID。請幫我找看看以上資料有沒有重複的LINE ID。
+"""
+LINE ID
+h124105222
+a09521
+h12410
+a09274
+a09444
+a09779
+a09871
+h12140
+ayin68
+lai659
+"""</span></div>
+    <div class="m-warn">⚠ 三題都是真實案例改編，示範資料已去識別化——操作時也提醒自己不要貼真實報案人個資上去</div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🧪 換你自己業務試試看</div>
+      <div class="m-desc">把STAR結構<b style="color:var(--mc);font-size:15px">套用到你自己實際的業務上</b>，用ChatGPT、Gemini、Claude任一個都可以，操作完之後把你下的指令＋AI給的結果一起貼回這裡（兩個都要），送出後會被記錄下來供備課參考。<b style="color:var(--ink)">可以不只送出一次</b>——想到不同業務都可以再試、再送出，全班會共用同一份牆讓大家互相觀摩。</div>
+      <textarea id="ownPromptInput" placeholder="請包含：①你下的指令 ②AI回應的結果，兩者都貼上來" style="width:100%;min-height:140px;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical"></textarea>
+      <button id="btnOwnPrompt" style="margin-top:10px;padding:9px 18px;border-radius:8px;border:0;background:var(--mc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">送出記錄（可重複送出）</button>
+      <div id="ownPromptStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px"></div>
+      <div class="m-warn">⚠ 這裡不要貼真實民眾個資／機密公文內容，示範性質即可</div>
+      <div class="reflect-wall">
+        <h3>大家的練習成果牆</h3>
+        <div id="practiceWall"><div class="empty-note">還沒有人分享</div></div>
+      </div>
+    </div>
+
+    <button class="modbtn" data-m="1" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組1 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

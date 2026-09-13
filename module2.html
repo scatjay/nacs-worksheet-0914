@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模組2 NotebookLM · 115A02</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-module="2">
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <div class="pagenav">
+    <a href="index.html">← 返回總覽</a>
+    <span class="pill" style="--mc:var(--m2);--mcs:var(--m2-soft)">模組 2 / 4</span>
+    <a href="module3.html">下一個：AI海報 →</a>
+  </div>
+  <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+
+  <div class="module" data-m="2">
+    <div class="module-head"><span class="m-num">2</span><span class="m-name">AI偵查官的打詐筆記本</span><span class="m-tool">NotebookLM</span></div>
+    <div class="m-desc">情境：分局長交辦製作防詐宣導podcast。先分析既有podcast腳本的結構/口語/心理操控手法，再用手機操作NotebookLM【探索來源】+【語音摘要】，以自身宣導業務為練習範例（交通安全、婦幼、酒駕、反詐騙、反毒、地震避難、邊境防疫等皆可）。</div>
+    <div class="m-hub">▷ <a href="https://notebooklm.google.com/" target="_blank">開啟 NotebookLM</a></div>
+    <div class="m-warn">⚠ 請從瀏覽器而非APP方式進入NotebookLM</div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🎙️ 分享你做的podcast</div>
+      <div class="m-desc">寫下你選的宣導主題、聽完自己podcast的心得，或貼上NotebookLM的分享連結，讓大家看看彼此做了什麼。可以重複分享。</div>
+      <textarea id="shareInput2" placeholder="例如：我做的主題是交通安全宣導，聽起來的心得是..." style="width:100%;min-height:100px;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical"></textarea>
+      <button id="btnShare2" style="margin-top:10px;padding:9px 18px;border-radius:8px;border:0;background:var(--mc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">送出分享（可重複送出）</button>
+      <div id="shareStatus2" style="font-size:12.5px;color:var(--muted);margin-top:8px"></div>
+      <div class="reflect-wall">
+        <h3>大家的podcast分享牆</h3>
+        <div id="shareWall2"><div class="empty-note">還沒有人分享</div></div>
+      </div>
+    </div>
+
+    <button class="modbtn" data-m="2" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組2 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+function QRCode(el, opts) { const qr = qrcode(0, 'M'); qr.addData(opts.text); qr.make(); el.innerHTML = qr.createImgTag(4); }
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>

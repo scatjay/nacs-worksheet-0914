@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模組3 AI宣傳海報 · 115A02</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-module="3">
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <div class="pagenav">
+    <a href="index.html">← 返回總覽</a>
+    <span class="pill" style="--mc:var(--m3);--mcs:var(--m3-soft)">模組 3 / 4</span>
+    <a href="module4.html">下一個：反思 →</a>
+  </div>
+  <div class="mtimer" id="moduleTimer">⏱ 00:00</div>
+
+  <div class="module" data-m="3">
+    <div class="module-head"><span class="m-num">3</span><span class="m-name">AI宣傳官的祕密武器</span><span class="m-tool">ChatGPT（生圖）</span></div>
+    <div class="m-desc">政策宣導海報生成，6種風格任選一種，下面已經是完整提示語，複製貼給ChatGPT即可，熟練後可替換成自己單位需要的內容。</div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格1：熱血動漫風（適合活動宣傳/鼓勵挑戰/防治宣導）</span><span class="ptxt">我要製作一張直式海報，強烈動態構圖，光效爆發，角色誇張動作，鮮豔色彩，速度線，日本動漫風格，熱血氛圍，high energy anime poster。將長寬比設為 3:4。
+
+以下是可運用的內容素材（可替換成你自己單位的宣導內容）：
+收到「多裝置登入」通知，別點！小心釣魚詐騙信件，詐騙信件常會假冒銀行或服務通知，誘導你點擊連結並輸入帳號資料。遇到可疑訊息時，請提高警覺。常見手法：仿造官方版型外觀模仿銀行或知名服務的設計，營造可信度；製造緊急感強調「異常登入」或「帳號風險」；誘導點擊連結導向假網站，要求輸入帳號、密碼或驗證碼。保護自己的做法：不要點擊來路不明的連結，直接開啟官方網站或App確認，不要在陌生頁面輸入帳號或驗證碼。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格2：史詩電影風（適合人員招募/活動主題視覺）</span><span class="ptxt">我要製作一張直式海報，海報宣傳主題是海巡署進行人員招募。強烈光影對比，主體置中，背景虛化，戲劇化氛圍，電影感構圖，cinematic poster，史詩氛圍
+
+以下是可運用之內容素材（可替換成你自己單位的招募/主題內容）：
+海巡署115年第4梯次志願士兵報名期程自115年5月7日(星期四)起至115年6月3日(星期三)17時止！歡迎年滿18歲至32歲，高級中等以上學校畢業或具教育部認可同等學力之社會青年加入海巡。本班隊甄選考試項目計有智力測驗及口試，另需檢附全民國防測驗成績，詳細資訊及簡章索取請逕電洽海巡人才招募專線0800-021-580，將有專人服務。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格3：Q版可愛風（適合親子活動/心靈療癒）</span><span class="ptxt">我要製作一張直式海報，主題是消防局宣傳居家用電安全：Q版角色，大頭比例，粉嫩色系（粉＋黃＋藍），圓角設計，卡通圖案，活潑排版，可愛療癒風
+
+以下是可運用的內容素材（可替換成你自己單位的宣導內容）：
+家中電器用品經長期不正當使用或未適當保養，如電線受拉扯、擠壓、尖銳容易造成電線斷裂短路，引起火災。遵守用電安全「5不1沒有」原則，確保居家用電安全：用電不超過負載電線、不綑綁折損電源插座、不常插插頭、不潮濕污損周圍、不放可燃物、沒有安全標章產品不買不用。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格4：玻璃擬態風（適合科技/智慧化主題）</span><span class="ptxt">我要製作一張直式海報，主題是消防署宣傳智慧消防。半透明玻璃面板，模糊背景，柔和漸層色（藍＋紫），發光邊框，乾淨UI排版，未來感設計，glassmorphism design，soft lighting
+
+以下是可運用的內容素材（可替換成你自己單位的科技化主題）：
+2026智慧城市展-智慧消防願景：一、災害應變雲端協作平臺，聚焦AI科技運用、雲端技術及行動EOC分散協作創新功能。二、AI語音輔助受理派遣平臺，利用AI語音辨識技術即時解析報案內容，提供精準派遣建議。三、消防人員定位救命系統，透過精準室內外定位技術即時追蹤消防員位置。四、智慧消防車隊系統，透過IOT技術監測車輛行車狀況及駕駛行為。五、AI救護耗材倉儲管理系統，整合IOT及AI影像辨識技術自動盤點緊急救護耗材。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格5：街頭塗鴉風（適合年輕族群防詐宣導）</span><span class="ptxt">我要製作一張1：1方形海報。主題是警察局提醒假徵才真詐騙的海報宣傳：塗鴉背景，霓虹色，強對比光影，街頭元素，動態排版，粗體字風格，年輕潮流感，urban street poster
+
+可運用內容素材（可替換成你自己單位的防詐宣導內容）：
+假徵才真詐騙常見特徵不可不知：1.標榜高薪彈性工時，引誘社會新鮮人上鉤。2.索取過多個人資料，包含信用卡號及提款卡號等。3.錄取前先繳錢，向求職者索取教育訓練費，或推銷公司課程與產品。4.要求私下聯絡以避免在公開平台留下紀錄。</span></div>
+
+    <div class="promptbox"><button class="copybtn" onclick="copyPrompt(this)">複製</button><span class="plabel">▷ 風格6：質感精品風（適合高端/慎重議題宣導）</span><span class="ptxt">我要製作一張長寬比4：3的海報，主題是警察局宣導防治假交友投資詐騙。黑＋金配色，低光環境，高對比光影，精緻材質（絲綢、金屬），極簡排版，高端質感，luxury poster，cinematic lighting。
+
+可運用內容素材（可替換成你自己單位的宣導內容）：
+假交友投資詐騙手法：建立接觸與信任，引入投資話題，指示購買虛擬貨幣，轉入指定錢包或平臺，帳面獲利、誘導加碼，出金受阻（以繳交各種費用為由阻撓被害人申請出金），持續榨乾或失聯。</span></div>
+    <div class="m-hub">▷ <a href="https://glamorous-glass-0c7.notion.site/HUB-1eb43d219c1b801a9c67ce90f91ebd17" target="_blank">開啟【普朗姆特煉星術 HUB】看風格參考圖</a></div>
+    <div class="m-warn" style="background:var(--ok-soft);color:var(--ok)">📌 完成上傳方式：①ChatGPT生完圖後，把圖片存到手機（長按存檔／截圖皆可）②開下面連結，直接把圖片拖曳或貼上到看板即可，不用登入帳號、不用申請權限。上午班、下午班都上傳到同一塊板，看得到彼此的作品。</div>
+    <div class="m-hub">▷ <a href="https://padlet.com/scatjay/115a02-ai-s023jfvlxwjsq6kfif3j" target="_blank">上傳你的海報到「115A02 政策宣導海報」看板</a></div>
+
+    <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">🎨 這裡也留一句話</div>
+      <div class="m-desc">圖傳去Padlet了，這裡順手寫一句：你選了哪個風格、主題做了什麼？不用等開Padlet也能在這頁看到大家選了什麼。可以重複分享。</div>
+      <textarea id="shareInput3" placeholder="例如：我選了熱血動漫風，做了防詐宣導海報" style="width:100%;min-height:70px;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical"></textarea>
+      <button id="btnShare3" style="margin-top:10px;padding:9px 18px;border-radius:8px;border:0;background:var(--mc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">送出分享（可重複送出）</button>
+      <div id="shareStatus3" style="font-size:12.5px;color:var(--muted);margin-top:8px"></div>
+      <div class="reflect-wall">
+        <h3>大家選的風格與主題</h3>
+        <div id="shareWall3"><div class="empty-note">還沒有人分享</div></div>
+      </div>
+    </div>
+
+    <button class="modbtn" data-m="3" style="margin-top:20px;width:100%"><span class="chk"></span><span class="lb">模組3 完成了嗎？<small>按這裡標記完成，回總覽可看到大家進度</small></span></button>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<script>
+function QRCode(el, opts) { const qr = qrcode(0, 'M'); qr.addData(opts.text); qr.make(); el.innerHTML = qr.createImgTag(4); }
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+</body>
+</html>
