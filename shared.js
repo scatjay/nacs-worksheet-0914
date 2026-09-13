@@ -41,8 +41,13 @@ function renderPagedWall(wallId, docs, renderItemFn, emptyMsg) {
   if (!wallState[wallId]) wallState[wallId] = PAGE_SIZE;
   const visible = docs.slice(0, wallState[wallId]);
   const remain = docs.length - visible.length;
-  wall.innerHTML = visible.map(renderItemFn).join('')
+  wall.innerHTML = visible.map((d, i) => renderItemFn(d, i)).join('')
     + (remain > 0 ? `<button class="loadmore" data-wall="${wallId}">顯示更多（還有 ${remain} 則）</button>` : '');
+}
+
+function updateTeaserCount(id, n) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = n > 0 ? `目前已有 ${n} 則，點右邊看全部` : '目前還沒有人分享';
 }
 
 document.addEventListener('click', e => {
@@ -50,7 +55,7 @@ document.addEventListener('click', e => {
   if (!btn) return;
   const wallId = btn.dataset.wall;
   wallState[wallId] = (wallState[wallId] || PAGE_SIZE) + PAGE_SIZE;
-  const renderers = { rosterList: renderRosterList, reflectWall: rerenderReflect, practiceWall: rerenderGeneric, shareWall2: rerenderGeneric, shareWall3: rerenderGeneric };
+  const renderers = { rosterList: renderRosterList, reflectWall: rerenderReflect, practiceWall: rerenderGeneric, shareWall2: rerenderGeneric, shareWall3: rerenderGeneric, wallFull: rerenderWallFull };
   if (renderers[wallId]) renderers[wallId](wallId);
 });
 
@@ -71,6 +76,39 @@ function reflectCardHtml(d) {
       <div class="rc-row"><b>Finding</b>${escapeHtml(d.r3||'')}</div>
       <div class="rc-row"><b>Future</b>${escapeHtml(d.r4||'')}</div>
     </div>`;
+}
+function shareCardHtmlNumbered(d, i) {
+  return `<div class="rcard"><div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div><div class="rc-row" style="white-space:pre-wrap;line-height:1.6">${escapeHtml(d.content||'')}</div></div>`;
+}
+function reflectCardHtmlNumbered(d, i) {
+  return `<div class="rcard">
+      <div class="rc-head"><span class="rc-num">#${i+1}</span>${escapeHtml(d.nickname||'匿名')}</div>
+      <div class="rc-row"><b>Reflection</b>${escapeHtml(d.r1||'')}</div>
+      <div class="rc-row"><b>Feeling</b>${escapeHtml(d.r2||'')}</div>
+      <div class="rc-row"><b>Finding</b>${escapeHtml(d.r3||'')}</div>
+      <div class="rc-row"><b>Future</b>${escapeHtml(d.r4||'')}</div>
+    </div>`;
+}
+
+function rerenderWallFull(wallId) {
+  const path = document.body.dataset.wallpath;
+  const isReflect = path === 'reflections';
+  renderPagedWall('wallFull', wallData['wallFull'] || [], isReflect ? reflectCardHtmlNumbered : shareCardHtmlNumbered, isReflect ? '還沒有人填寫' : '還沒有人分享');
+}
+
+function initWallPage() {
+  const path = document.body.dataset.wallpath;
+  if (!path) return;
+  const isReflect = path === 'reflections';
+  const cardFn = isReflect ? reflectCardHtmlNumbered : shareCardHtmlNumbered;
+  const emptyMsg = isReflect ? '還沒有人填寫' : '還沒有人分享';
+  db.ref(`${ROOT}/${path}`).on('value', snap => {
+    const docs = snap.val() ? Object.values(snap.val()) : [];
+    docs.sort((a,b) => (a.updatedAt||0) - (b.updatedAt||0)); // 依送出先後排序、從第一筆開始編號
+    renderPagedWall('wallFull', docs, cardFn, emptyMsg);
+    const countEl = document.getElementById('wallFullCount');
+    if (countEl) countEl.textContent = `共 ${docs.length} 則`;
+  });
 }
 
 function initQR() {
@@ -146,10 +184,10 @@ function docsOf(val) {
 
 function initListeners() {
   db.ref(`${ROOT}/roster`).on('value', snap => { const v = snap.val(); renderRoster(v); renderModuleCount(v); });
-  db.ref(`${ROOT}/reflections`).on('value', snap => renderPagedWall('reflectWall', docsOf(snap.val()), reflectCardHtml, '還沒有人填寫'));
-  db.ref(`${ROOT}/practice_log`).on('value', snap => renderPagedWall('practiceWall', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
-  db.ref(`${ROOT}/share2`).on('value', snap => renderPagedWall('shareWall2', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
-  db.ref(`${ROOT}/share3`).on('value', snap => renderPagedWall('shareWall3', docsOf(snap.val()), shareCardHtml, '還沒有人分享'));
+  db.ref(`${ROOT}/reflections`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('reflectWall', docs, reflectCardHtml, '還沒有人填寫'); updateTeaserCount('reflectWallCount', docs.length); });
+  db.ref(`${ROOT}/practice_log`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('practiceWall', docs, shareCardHtml, '還沒有人分享'); updateTeaserCount('practiceWallCount', docs.length); });
+  db.ref(`${ROOT}/share2`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('shareWall2', docs, shareCardHtml, '還沒有人分享'); updateTeaserCount('shareWall2Count', docs.length); });
+  db.ref(`${ROOT}/share3`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('shareWall3', docs, shareCardHtml, '還沒有人分享'); updateTeaserCount('shareWall3Count', docs.length); });
   const pill = document.getElementById('connPill');
   if (pill) pill.textContent = '● 即時連線中';
 }
@@ -351,6 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGate();
   initQR();
   initListeners();
+  initWallPage();
   setupJoin();
   if (document.body.dataset.module) setupMarkDone(); // 只在模組頁綁「標記完成」，index的模組卡是純導覽連結
   setupShareBox('practice_log', 'ownPromptInput', 'btnOwnPrompt', 'ownPromptStatus');

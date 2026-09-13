@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>模組1 練習成果牆 · 115A02</title>
+<link rel="stylesheet" href="shared.css">
+</head>
+<body data-wallpath="practice_log">
+<div id="gate" hidden>
+  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
+  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <button id="gateBtn">進入</button>
+  <div class="st" id="gateStatus"></div>
+</div>
+<div class="wrap" id="pageContent" hidden>
+  <div class="pagenav">
+    <a href="module1.html">← 返回模組1</a><a href="#" onclick="logout();return false;" style="color:var(--muted);font-size:12px">登出／換人</a>
+    <span class="pill" style="--mc:var(--m1);--mcs:var(--m1-soft)">成果牆</span>
+    <a href="index.html">回總覽 →</a>
+  </div>
+
+  <div class="module" data-m="1" style="padding-bottom:8px">
+    <div class="wallpage-head">
+      <h1>🧪 大家的練習成果牆</h1>
+      <span class="wallpage-count" id="wallFullCount">載入中…</span>
+    </div>
+    <div class="wallpage-desc">依送出先後編號，#1 是最早送出的。想再補一筆練習，回<a href="module1.html" style="color:var(--m1);font-weight:700">模組1</a>頁面下方送出即可。</div>
+    <div id="wallFull"><div class="empty-note">還沒有人分享</div></div>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="shared.js?v=3"></script>
+</body>
+</html>

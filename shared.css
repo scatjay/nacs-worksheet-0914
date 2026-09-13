@@ -166,3 +166,18 @@ footer.note{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;fo
 /* 分頁「顯示更多」 */
 .loadmore{display:block;width:100%;margin-top:10px;padding:9px;border-radius:8px;border:1px dashed var(--line);background:var(--surface2);color:var(--muted);font-family:var(--sans);font-size:12.5px;font-weight:700;cursor:pointer}
 .loadmore:hover{color:var(--ink);border-color:var(--muted)}
+
+/* 模組頁裡的成果牆「預告條」，牆本身移到獨立分頁去看 */
+.wall-teaser{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line)}
+.wall-teaser-count{font-size:13px;color:var(--muted)}
+.wall-teaser-btn{margin-left:auto;text-decoration:none;background:var(--mc);color:#fff;font-weight:700;font-size:13.5px;padding:9px 18px;border-radius:8px;white-space:nowrap}
+.wall-teaser-btn:hover{opacity:.88}
+
+/* 卡片上的完成順序編號 */
+.rc-num{font-family:var(--mono);font-weight:700;color:#fff;background:var(--mc);border-radius:20px;padding:1px 8px;font-size:11px;margin-right:8px}
+
+/* 獨立成果牆分頁 */
+.wallpage-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.wallpage-head h1{font-size:clamp(19px,3vw,24px);font-family:var(--serif)}
+.wallpage-count{font-family:var(--mono);font-size:12.5px;color:var(--mc);background:var(--mcs);padding:3px 12px;border-radius:20px;font-weight:700}
+.wallpage-desc{color:var(--muted);font-size:13.5px;margin:6px 0 20px}
