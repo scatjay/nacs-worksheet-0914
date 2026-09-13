@@ -111,6 +111,7 @@ function logout() {
   try {
     localStorage.removeItem('nacs0914_myid');
     localStorage.removeItem('nacs0914_nickname');
+    localStorage.removeItem('nacs0914_gate_ok'); // 換人要重新走一次密碼+暱稱畫面
   } catch(e) {}
   location.href = 'index.html';
 }
@@ -258,16 +259,30 @@ function initGate() {
   const input = document.getElementById('gatePass');
   const btn = document.getElementById('gateBtn');
   const status = document.getElementById('gateStatus');
+  const nameInput = document.getElementById('inName');
+  const unitInput = document.getElementById('inUnit');
   const tryEnter = () => {
-    if ((input.value || '').trim() === GATE_CODE) {
-      try { localStorage.setItem('nacs0914_gate_ok', '1'); } catch(e) {}
-      gate.hidden = true; content.hidden = false;
-    } else {
+    if ((input.value || '').trim() !== GATE_CODE) {
       status.textContent = '密碼不對，請問講師';
+      return;
     }
+    if (nameInput && !nameInput.value.trim()) {
+      status.textContent = '請輸入暱稱才能進入';
+      return;
+    }
+    try { localStorage.setItem('nacs0914_gate_ok', '1'); } catch(e) {}
+    if (nameInput) {
+      const nickname = nameInput.value.trim();
+      const unit = (unitInput && unitInput.value.trim()) || '';
+      myNickname = nickname;
+      try { localStorage.setItem('nacs0914_nickname', nickname); } catch(e) {}
+      db.ref(`${ROOT}/roster/${myId}`).update({ nickname, unit, updatedAt: Date.now() });
+    }
+    gate.hidden = true; content.hidden = false;
   };
   btn.addEventListener('click', tryEnter);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
+  if (unitInput) unitInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -275,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initQR();
   initListeners();
   setupJoin();
-  setupMarkDone();
+  if (document.body.dataset.module) setupMarkDone(); // 只在模組頁綁「標記完成」，index的模組卡是純導覽連結
   setupShareBox('practice_log', 'ownPromptInput', 'btnOwnPrompt', 'ownPromptStatus');
   setupShareBox('share2', 'shareInput2', 'btnShare2', 'shareStatus2');
   setupShareBox('share3', 'shareInput3', 'btnShare3', 'shareStatus3');

@@ -8,8 +8,12 @@
 </head>
 <body>
 <div id="gate" hidden>
-  <div class="gt">🔒 請輸入現場公布的通關密碼</div>
-  <input type="password" id="gatePass" placeholder="密碼" inputmode="numeric">
+  <div class="gt">115A02 警佐晉升警正 AI實作</div>
+  <div id="qrcode" style="margin:12px auto"></div>
+  <p style="font-size:12px;color:var(--muted);margin:0 0 14px">📱 手機掃這個QR，直接開啟本頁</p>
+  <input type="password" id="gatePass" placeholder="通關密碼" inputmode="numeric" style="margin-bottom:10px">
+  <input id="inName" placeholder="暱稱（不要用本名）" maxlength="12" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;margin-bottom:10px;text-align:center">
+  <input id="inUnit" placeholder="任職單位（例：仁武分局）" maxlength="20" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:15px;text-align:center">
   <button id="gateBtn">進入</button>
   <div class="st" id="gateStatus"></div>
 </div>
@@ -32,19 +36,10 @@
   </header>
 
   <section id="roster">
-    <div class="sec-head"><h2>1️⃣ 先加入現場動態</h2><span id="connPill" style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">連線中…</span></div>
-    <div class="sec-sub"><b style="color:var(--seal)">請用暱稱，不要用本名</b>；任職單位可以填。加入之後，下面4個模組完成人數大家都看得到。<b style="color:var(--ink)">今天4個模組都要完成</b>，不是做完幾個就好。</div>
-    <div class="qrbox">
-      <div id="qrcode"></div>
-      <div class="qrtxt"><b>📱 掃描開啟本頁</b><br>手機掃這個QR，直接開啟學習單首頁。</div>
-    </div>
+    <div class="sec-head"><h2>1️⃣ 現場動態</h2><span id="connPill" style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">連線中…</span></div>
+    <div class="sec-sub">下面是各模組完成人數，跟大家目前的進度。<b style="color:var(--ink)">今天4個模組都要完成</b>，不是做完幾個就好。</div>
     <div class="roster-box">
-      <div class="join-row" id="joinRow">
-        <input id="inName" placeholder="暱稱（例：巡邏王，不要用本名）" maxlength="12">
-        <input id="inUnit" placeholder="任職單位（例：仁武分局）" maxlength="20">
-        <button id="btnJoin">加入現場看板</button>
-      </div>
-      <div class="progress-row" id="progressRow" hidden style="margin-top:14px">
+      <div class="progress-row" id="progressRow" style="margin-top:0">
         <button class="modbtn" data-m="1" onclick="location.href='module1.html'"><span class="chk"></span><span class="lb">模組1<small>STAR提示語（點我前往）</small></span></button>
         <button class="modbtn" data-m="2" onclick="location.href='module2.html'"><span class="chk"></span><span class="lb">模組2<small>NotebookLM（點我前往）</small></span></button>
         <button class="modbtn" data-m="3" onclick="location.href='module3.html'"><span class="chk"></span><span class="lb">模組3<small>AI宣傳海報（點我前往）</small></span></button>
