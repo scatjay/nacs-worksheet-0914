@@ -107,6 +107,14 @@ function initListeners() {
   if (pill) pill.textContent = '● 即時連線中';
 }
 
+function logout() {
+  try {
+    localStorage.removeItem('nacs0914_myid');
+    localStorage.removeItem('nacs0914_nickname');
+  } catch(e) {}
+  location.href = 'index.html';
+}
+
 function setupJoin() {
   const btn = document.getElementById('btnJoin');
   if (!btn) return;
