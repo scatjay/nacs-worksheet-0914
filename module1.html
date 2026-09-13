@@ -91,8 +91,8 @@ lai659
 
     <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)">
       <div style="font-weight:700;font-size:14px;margin-bottom:6px">🧪 換你自己業務試試看</div>
-      <div class="m-desc">把STAR結構<b style="color:var(--mc);font-size:15px">套用到你自己實際的業務上</b>，用ChatGPT、Gemini、Claude任一個都可以，操作完之後把你下的指令＋AI給的結果一起貼回這裡（兩個都要），送出後會被記錄下來供備課參考。<b style="color:var(--ink)">可以不只送出一次</b>——想到不同業務都可以再試、再送出，全班會共用同一份牆讓大家互相觀摩。</div>
-      <textarea id="ownPromptInput" placeholder="請包含：①你下的指令 ②AI回應的結果，兩者都貼上來" style="width:100%;min-height:140px;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;resize:vertical"></textarea>
+      <div class="m-desc">把STAR結構<b style="color:var(--mc);font-size:15px">套用到你自己實際的業務上</b>，用ChatGPT、Gemini、Claude任一個都可以。操作完之後點對話右上角的【分享】產生連結，把連結貼在這裡就好，讓大家可以直接點開看你怎麼下指令的。<b style="color:var(--ink)">可以不只送出一次</b>——想到不同業務都可以再試、再送出，全班會共用同一份牆讓大家互相觀摩。</div>
+      <input type="url" id="ownPromptInput" placeholder="貼上ChatGPT/Gemini/Claude分享的對話連結（https://...）" style="width:100%;margin-top:8px;padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:var(--surface2);color:var(--ink);font-family:var(--sans);font-size:14px">
       <button id="btnOwnPrompt" style="margin-top:10px;padding:9px 18px;border-radius:8px;border:0;background:var(--mc);color:#fff;font-weight:700;font-size:14px;cursor:pointer">送出記錄（可重複送出）</button>
       <div id="ownPromptStatus" style="font-size:12.5px;color:var(--muted);margin-top:8px"></div>
       <div class="m-warn">⚠ 這裡不要貼真實民眾個資／機密公文內容，示範性質即可</div>
