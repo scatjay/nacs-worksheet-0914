@@ -245,9 +245,27 @@ function setupMarkDone() {
   });
 }
 
+// 輸入過的內容自動存草稿到localStorage，避免重整/切頁遺失還沒送出的內容
+function bindDraft(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const key = 'nacs0914_draft_' + id;
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved && !el.value) el.value = saved;
+  } catch(e) {}
+  el.addEventListener('input', () => {
+    try { localStorage.setItem(key, el.value); } catch(e) {}
+  });
+}
+function clearDraft(id) {
+  try { localStorage.removeItem('nacs0914_draft_' + id); } catch(e) {}
+}
+
 function setupShareBox(path, textareaId, btnId, statusId) {
   const btn = document.getElementById(btnId);
   if (!btn) return;
+  bindDraft(textareaId);
   btn.addEventListener('click', async () => {
     const input = document.getElementById(textareaId);
     const text = input.value.trim();
@@ -261,6 +279,7 @@ function setupShareBox(path, textareaId, btnId, statusId) {
       });
       statusEl.textContent = '✅ 已記錄，謝謝分享！';
       input.value = '';
+      clearDraft(textareaId);
     } catch (e) {
       statusEl.textContent = '❌ ' + (e.message || '發生錯誤，稍後再試一次');
     } finally {
@@ -272,6 +291,7 @@ function setupShareBox(path, textareaId, btnId, statusId) {
 function setupReflect() {
   const btn = document.getElementById('btnReflect');
   if (!btn) return;
+  ['rf1','rf2','rf3','rf4'].forEach(bindDraft);
   btn.addEventListener('click', async () => {
     const r1 = document.getElementById('rf1').value.trim();
     const r2 = document.getElementById('rf2').value.trim();
@@ -348,6 +368,8 @@ function initGate() {
   const status = document.getElementById('gateStatus');
   const nameInput = document.getElementById('inName');
   const unitInput = document.getElementById('inUnit');
+  bindDraft('inName');
+  bindDraft('inUnit');
   const sesBtns = document.querySelectorAll('.sesbtn');
   let selectedSession = 'am';
   sesBtns.forEach(b => {
