@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=11">
+<link rel="stylesheet" href="shared.css?v=12">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -188,8 +188,21 @@ const PRESENCE_IDLE_MS = 2 * 60 * 1000;
 const PRESENCE_OFFLINE_MS = 10 * 60 * 1000;
 const MOD_NAMES = { 1: '模組1 STAR', 2: '模組2 NotebookLM', 3: '模組3 AI海報', 4: '模組4 反思' };
 
+function dedupeRoster(roster) {
+  // 同一人常因重整頁面/換裝置/無痕模式遺失localStorage，重新加入變成新的裝置id，
+  // 用暱稱去重取最新一筆代表這個人，避免把同一人算成好幾個學員。
+  const byNick = {};
+  let anonN = 0;
+  Object.values(roster || {}).forEach(d => {
+    const nick = (d.nickname || '').trim();
+    const key = nick || `__anon_${anonN++}`; // 還沒填暱稱的視為各自獨立，無法去重
+    if (!byNick[key] || (d.updatedAt || 0) > (byNick[key].updatedAt || 0)) byNick[key] = d;
+  });
+  return Object.values(byNick);
+}
+
 function renderOverview(roster) {
-  const docs = Object.values(roster || {});
+  const docs = dedupeRoster(roster);
   const total = docs.length;
   let live = 0, idle = 0, offline = 0;
   const modCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
