@@ -163,12 +163,20 @@ function initQR() {
 
 let lastRosterDocs = [];
 
+function elapsedLabel(fromTs) {
+  if (!fromTs) return '';
+  const mins = Math.max(0, Math.floor((Date.now() - fromTs) / 60000));
+  if (mins < 60) return `${mins}分`;
+  return `${Math.floor(mins / 60)}時${mins % 60}分`;
+}
+
 function rosterPersonHtml(d) {
   const prog = Object.keys(d.progress||{}).map(Number);
   const dots = [1,2,3,4].map(m => `<span class="pdot ${prog.includes(m)?'on':''}"></span>`).join('');
+  const elapsed = elapsedLabel(d.joinedAt || d.updatedAt);
   return `
     <div class="rperson">
-      <span class="name">${escapeHtml(d.nickname||'')} <span class="status-pill live">●上線</span></span>
+      <span class="name">${escapeHtml(d.nickname||'')} <span class="status-pill live">●上線${elapsed}</span></span>
       <span class="unit">${escapeHtml(d.unit||'')}</span>
       <span class="task"><span class="progress-dots">${dots}</span></span>
       <span class="ans">${escapeHtml(MOD_NAMES[Math.max(...prog,0)] || '尚未開始')}</span>
@@ -225,7 +233,9 @@ function docsOf(val) {
 }
 
 function initListeners() {
-  db.ref(`${ROOT}/roster`).on('value', snap => { const v = snap.val(); renderRoster(v); renderModuleCount(v); });
+  let lastRosterRaw = null;
+  db.ref(`${ROOT}/roster`).on('value', snap => { lastRosterRaw = snap.val(); renderRoster(lastRosterRaw); renderModuleCount(lastRosterRaw); });
+  setInterval(() => { if (lastRosterRaw) renderRoster(lastRosterRaw); }, 30000);
   db.ref(`${ROOT}/reflections`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('reflectWall', docs, reflectCardHtml, '還沒有人填寫'); updateTeaserCount('reflectWallCount', docs.length); });
   db.ref(`${ROOT}/practice_log`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('practiceWall', docs, shareCardHtml, '還沒有人分享'); updateTeaserCount('practiceWallCount', docs.length); });
   db.ref(`${ROOT}/share2`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('shareWall2', docs, shareCardHtml, '還沒有人分享'); updateTeaserCount('shareWall2Count', docs.length); });
@@ -440,7 +450,7 @@ function initGate() {
         localStorage.setItem('nacs0914_nickname', nickname);
         localStorage.setItem('nacs0914_session', mySession);
       } catch(e) {}
-      db.ref(`${ROOT}/roster/${myId}`).update({ nickname, unit, session: mySession, updatedAt: Date.now() });
+      db.ref(`${ROOT}/roster/${myId}`).update({ nickname, unit, session: mySession, updatedAt: Date.now(), joinedAt: Date.now() });
     }
     gate.hidden = true; content.hidden = false;
   };
