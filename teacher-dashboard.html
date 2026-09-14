@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=12">
+<link rel="stylesheet" href="shared.css?v=13">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -66,6 +66,10 @@
   <div class="td-head">
     <h1 style="font-size:20px">📊 教師後台 — 即時作業掃描</h1>
     <a href="index.html" style="margin-left:auto;color:var(--muted);font-size:13px">← 回學員頁面</a>
+  </div>
+  <div class="sort-row" id="sessionRow">
+    <button class="sortbtn active" data-session="am">☀️ 上午場</button>
+    <button class="sortbtn" data-session="pm">🌇 下午場</button>
   </div>
   <div class="ov-head">👥 學員使用狀況</div>
   <div class="overview" id="ovCards"></div>
@@ -201,8 +205,11 @@ function dedupeRoster(roster) {
   return Object.values(byNick);
 }
 
+let overviewSession = 'am';
+
 function renderOverview(roster) {
-  const docs = dedupeRoster(roster);
+  const wanted = Object.values(roster || {}).filter(d => (d.session === 'pm' ? 'pm' : 'am') === overviewSession);
+  const docs = dedupeRoster(wanted);
   const total = docs.length;
   let live = 0, idle = 0, offline = 0;
   const modCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -267,14 +274,28 @@ function initGate() {
   input.addEventListener('keydown', e => { if (e.key === 'Enter') tryEnter(); });
 }
 
+let lastRoster = {};
+
+function initSessionToggle() {
+  const row = document.getElementById('sessionRow');
+  if (!row) return;
+  row.querySelectorAll('.sortbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      overviewSession = btn.dataset.session;
+      row.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b === btn));
+      renderOverview(lastRoster);
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initGate();
   initTabs();
   initDashSort();
+  initSessionToggle();
   renderColumn('practice_log', 'colPractice', 'cntPractice');
   renderColumn('share2', 'colShare2', 'cntShare2');
   renderColumn('share3', 'colShare3', 'cntShare3');
-  let lastRoster = {};
   db.ref(`${ROOT}/roster`).on('value', snap => { lastRoster = snap.val() || {}; renderOverview(lastRoster); });
   setInterval(() => renderOverview(lastRoster), 30000); // 上線/離線狀態隨時間變化，定期重算
 });
