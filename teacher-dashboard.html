@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=9">
+<link rel="stylesheet" href="shared.css?v=10">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -52,6 +52,11 @@
     <button class="td-tab" data-tab="share2">模組2 NotebookLM<span class="cnt" id="cntShare2"></span></button>
     <button class="td-tab" data-tab="share3">模組3 AI海報<span class="cnt" id="cntShare3"></span></button>
   </div>
+  <div class="sort-row" id="dashSortRow">
+    <button class="sortbtn active" data-sort="recent">🕐 最新繳交</button>
+    <button class="sortbtn" data-sort="worst">🔻 待處理優先</button>
+    <button class="sortbtn" data-sort="best">🔺 表現優先</button>
+  </div>
   <div class="td-panel" id="panel-practice_log"><div id="colPractice"></div></div>
   <div class="td-panel" id="panel-share2" hidden><div id="colShare2"></div></div>
   <div class="td-panel" id="panel-share3" hidden><div id="colShare3"></div></div>
@@ -84,34 +89,71 @@ function fetchBadge(fetchStatus) {
   return '<span class="badge-bad">⚠️讀取失敗</span>';
 }
 
+let dashSortMode = 'recent';
+const lastData = {};
+
+// overall越差分數越小；同一overall再依stars排序
+const OVERALL_RANK = { '完成': 3, '需加強': 2, '疑似無效或空白': 1, '掃描失敗': 0 };
+function qualityScore(s) {
+  if (!s) return -1; // 尚未掃描排最前面(待處理優先)或最後面(表現優先)由排序方向決定
+  const rank = OVERALL_RANK[s.overall] ?? 1;
+  return rank * 10 + (Number(s.stars) || 0);
+}
+
+function sortIds(ids, raw, scr) {
+  if (dashSortMode === 'worst') return ids.sort((a,b) => qualityScore(scr[a]) - qualityScore(scr[b]));
+  if (dashSortMode === 'best') return ids.sort((a,b) => qualityScore(scr[b]) - qualityScore(scr[a]));
+  return ids.sort((a,b) => (raw[b].updatedAt||0) - (raw[a].updatedAt||0));
+}
+
+function renderList(collection, elId, cntId) {
+  const data = lastData[collection];
+  if (!data) return;
+  const { raw, scr } = data;
+  const el = document.getElementById(elId);
+  const cntEl = document.getElementById(cntId);
+  const ids = sortIds(Object.keys(raw), raw, scr);
+  const studentCount = new Set(ids.map(id => id.slice(0, id.lastIndexOf('_')))).size;
+  if (cntEl) cntEl.textContent = `${studentCount}人／${ids.length}件`;
+  if (!ids.length) { el.innerHTML = '<div class="td-empty">目前還沒有人繳交</div>'; return; }
+  el.innerHTML = ids.map((id, i) => {
+    const d = raw[id], s = scr[id];
+    const overallClass = s ? (s.overall === '完成' ? 'ok' : 'warn') : '';
+    return `<details class="td-item">
+      <summary>
+        <span class="nm">${escapeHtml(d.nickname||'匿名')}</span>
+        ${s ? `<span class="overall ${overallClass}">${escapeHtml(s.overall||'')}</span>` : '<span class="overall warn">尚未掃描</span>'}
+        ${s ? `<span class="stars">${starsHtml(s.stars)}</span>` : ''}
+        ${s ? fetchBadge(s.fetchStatus) : ''}
+      </summary>
+      <div class="td-body">
+        <a href="${escapeHtml(d.content||'')}" target="_blank">${escapeHtml(d.content||'')}</a>
+        ${s && s.criteria ? `<div class="crit">${s.criteria.map(c => `<div class="${c.pass?'':'no'}">${c.pass?'✓':'✗'} ${escapeHtml(c.name)}：${escapeHtml(c.note||'')}</div>`).join('')}</div>` : ''}
+        ${s && s.suggestion ? `<div class="sugg">💡 ${escapeHtml(s.suggestion)}</div>` : ''}
+      </div>
+    </details>`;
+  }).join('');
+}
+
 function renderColumn(collection, elId, cntId) {
   db.ref(`${ROOT}/${collection}`).on('value', rawSnap => {
     db.ref(`${ROOT}/screening/${collection}`).on('value', scrSnap => {
-      const raw = rawSnap.val() || {};
-      const scr = scrSnap.val() || {};
-      const el = document.getElementById(elId);
-      const cntEl = document.getElementById(cntId);
-      const ids = Object.keys(raw).sort((a,b) => (raw[b].updatedAt||0) - (raw[a].updatedAt||0));
-      const studentCount = new Set(ids.map(id => id.slice(0, id.lastIndexOf('_')))).size;
-      if (cntEl) cntEl.textContent = `${studentCount}人／${ids.length}件`;
-      if (!ids.length) { el.innerHTML = '<div class="td-empty">目前還沒有人繳交</div>'; return; }
-      el.innerHTML = ids.map((id, i) => {
-        const d = raw[id], s = scr[id];
-        const overallClass = s ? (s.overall === '完成' ? 'ok' : 'warn') : '';
-        return `<details class="td-item">
-          <summary>
-            <span class="nm">${escapeHtml(d.nickname||'匿名')}</span>
-            ${s ? `<span class="overall ${overallClass}">${escapeHtml(s.overall||'')}</span>` : '<span class="overall warn">尚未掃描</span>'}
-            ${s ? `<span class="stars">${starsHtml(s.stars)}</span>` : ''}
-            ${s ? fetchBadge(s.fetchStatus) : ''}
-          </summary>
-          <div class="td-body">
-            <a href="${escapeHtml(d.content||'')}" target="_blank">${escapeHtml(d.content||'')}</a>
-            ${s && s.criteria ? `<div class="crit">${s.criteria.map(c => `<div class="${c.pass?'':'no'}">${c.pass?'✓':'✗'} ${escapeHtml(c.name)}：${escapeHtml(c.note||'')}</div>`).join('')}</div>` : ''}
-            ${s && s.suggestion ? `<div class="sugg">💡 ${escapeHtml(s.suggestion)}</div>` : ''}
-          </div>
-        </details>`;
-      }).join('');
+      lastData[collection] = { raw: rawSnap.val() || {}, scr: scrSnap.val() || {} };
+      renderList(collection, elId, cntId);
+    });
+  });
+}
+
+function initDashSort() {
+  const row = document.getElementById('dashSortRow');
+  if (!row) return;
+  row.querySelectorAll('.sortbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      dashSortMode = btn.dataset.sort;
+      row.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b === btn));
+      renderList('practice_log', 'colPractice', 'cntPractice');
+      renderList('share2', 'colShare2', 'cntShare2');
+      renderList('share3', 'colShare3', 'cntShare3');
     });
   });
 }
@@ -143,6 +185,7 @@ function initGate() {
 document.addEventListener('DOMContentLoaded', () => {
   initGate();
   initTabs();
+  initDashSort();
   renderColumn('practice_log', 'colPractice', 'cntPractice');
   renderColumn('share2', 'colShare2', 'cntShare2');
   renderColumn('share3', 'colShare3', 'cntShare3');
