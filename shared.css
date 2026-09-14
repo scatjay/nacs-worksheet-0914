@@ -128,6 +128,7 @@ section{margin-top:clamp(30px,5vw,46px)}
 .status-pill{font-family:var(--mono);font-size:9px;padding:0 6px;border-radius:20px}
 .status-pill.live{background:var(--ok-soft);color:var(--ok)}
 @media(max-width:640px){
+  .roster-list{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
   .rperson{grid-template-columns:1fr auto;grid-template-areas:"name name" "unit task";gap:1px 8px;padding:4px 8px}
   .rperson .name{grid-area:name}
   .rperson .unit{grid-area:unit}
