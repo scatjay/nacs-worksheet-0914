@@ -170,13 +170,24 @@ function elapsedLabel(fromTs) {
   return `${Math.floor(mins / 60)}時${mins % 60}分`;
 }
 
+const IDLE_AFTER_MS = 2 * 60 * 1000;    // 超過2分鐘沒動作 → 沒在動作
+const OFFLINE_AFTER_MS = 10 * 60 * 1000; // 超過10分鐘沒動作 → 已離線（沒有心跳機制，這是用最後動作時間推估）
+
+function presenceHtml(d) {
+  const sinceAction = Date.now() - (d.updatedAt || 0);
+  const elapsed = elapsedLabel(d.joinedAt || d.updatedAt);
+  if (sinceAction < IDLE_AFTER_MS) return { cls: 'live', label: `●上線${elapsed}` };
+  if (sinceAction < OFFLINE_AFTER_MS) return { cls: 'idle', label: '◐沒在動作' };
+  return { cls: 'offline', label: `○已離線${elapsedLabel(d.updatedAt)}` };
+}
+
 function rosterPersonHtml(d) {
   const prog = Object.keys(d.progress||{}).map(Number);
   const dots = [1,2,3,4].map(m => `<span class="pdot ${prog.includes(m)?'on':''}"></span>`).join('');
-  const elapsed = elapsedLabel(d.joinedAt || d.updatedAt);
+  const pres = presenceHtml(d);
   return `
     <div class="rperson">
-      <span class="name">${escapeHtml(d.nickname||'')} <span class="status-pill live">●上線${elapsed}</span></span>
+      <span class="name">${escapeHtml(d.nickname||'')} <span class="status-pill ${pres.cls}">${pres.label}</span></span>
       <span class="unit">${escapeHtml(d.unit||'')}</span>
       <span class="task"><span class="progress-dots">${dots}</span></span>
       <span class="ans">${escapeHtml(MOD_NAMES[Math.max(...prog,0)] || '尚未開始')}</span>

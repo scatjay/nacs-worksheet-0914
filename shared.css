@@ -127,6 +127,8 @@ section{margin-top:clamp(30px,5vw,46px)}
 .empty-note{color:var(--muted);font-size:13px;text-align:center;padding:16px 0}
 .status-pill{font-family:var(--mono);font-size:9px;padding:0 6px;border-radius:20px}
 .status-pill.live{background:var(--ok-soft);color:var(--ok)}
+.status-pill.idle{background:var(--line);color:var(--muted)}
+.status-pill.offline{background:var(--seal-soft);color:var(--seal)}
 @media(max-width:640px){
   .roster-list{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
   .rperson{grid-template-columns:1fr auto;grid-template-areas:"name name" "unit task";gap:1px 8px;padding:4px 8px}
