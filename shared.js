@@ -375,6 +375,37 @@ function setupShareBox(path, textareaId, btnId, statusId) {
   });
 }
 
+function initSubmissionFeedback(collection, afterElId) {
+  const afterEl = document.getElementById(afterElId);
+  if (!afterEl) return;
+  let box = null;
+  db.ref(`${ROOT}/screening/${collection}`).on('value', snap => {
+    const all = snap.val() || {};
+    const mine = Object.keys(all).filter(k => k.startsWith(myId + '_')).sort();
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'fb-note';
+      box.hidden = true;
+      afterEl.insertAdjacentElement('afterend', box);
+    }
+    if (!mine.length) { box.hidden = true; return; }
+    const latest = all[mine[mine.length - 1]];
+    const fs = latest.fetchStatus;
+    if (!fs || fs === 'ok') { box.hidden = true; return; }
+    box.hidden = false;
+    if (fs === 'unreadable_js_app' || fs === 'requires_google_login') {
+      box.className = 'fb-note fb-info';
+      box.textContent = 'ℹ️ AI掃描讀不到這類分享頁的內容細節（技術限制），格式已確認沒問題，老師會另外人工看過，不影響你的繳交。';
+    } else if (fs === 'not_a_url') {
+      box.className = 'fb-note fb-warn';
+      box.textContent = '⚠️ 你貼的內容看起來不是網址連結，記得貼「分享連結」網址喔！';
+    } else {
+      box.className = 'fb-note fb-warn';
+      box.textContent = '⚠️ AI掃描目前讀不到你的分享連結內容，可能是連結錯誤或分享設定沒開，麻煩檢查一下（設成「知道連結的人都能查看」）後重新送出。';
+    }
+  });
+}
+
 function setupReflect() {
   const btn = document.getElementById('btnReflect');
   if (!btn) return;
@@ -505,6 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupShareBox('practice_log', 'ownPromptInput', 'btnOwnPrompt', 'ownPromptStatus');
   setupShareBox('share2', 'shareInput2', 'btnShare2', 'shareStatus2');
   setupShareBox('share3', 'shareInput3', 'btnShare3', 'shareStatus3');
+  initSubmissionFeedback('practice_log', 'ownPromptStatus');
+  initSubmissionFeedback('share2', 'shareStatus2');
+  initSubmissionFeedback('share3', 'shareStatus3');
   setupReflect();
   initTimer();
 });

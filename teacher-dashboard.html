@@ -4,24 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=7">
+<link rel="stylesheet" href="shared.css?v=8">
 <style>
-.td-wrap{max-width:1100px;margin:0 auto;padding:24px 20px 80px}
-.td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:20px}
-.td-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-@media(max-width:900px){.td-cols{grid-template-columns:1fr}}
-.td-col h2{font-size:15px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
-.td-item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12.5px}
+.td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
+.td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
+.td-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.td-tab{padding:9px 16px;border-radius:20px;border:1.5px solid var(--line);background:var(--paper);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer}
+.td-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.td-tab .cnt{font-family:var(--mono);font-size:11px;opacity:.8;margin-left:4px}
+.td-panel[hidden]{display:none}
+.td-item{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:12.5px;overflow:hidden}
+.td-item summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.td-item summary::-webkit-details-marker{display:none}
+.td-item summary::before{content:"▸";color:var(--muted);font-size:11px;transition:transform .15s}
+.td-item[open] summary::before{transform:rotate(90deg)}
 .td-item .nm{font-weight:700}
-.td-item .stars{font-size:13px;margin:4px 0}
-.td-item .overall{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:700;margin-left:6px}
+.td-item .stars{font-size:12px;font-family:var(--mono)}
+.td-item .overall{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:700}
 .td-item .overall.ok{background:var(--ok-soft);color:var(--ok)}
 .td-item .overall.warn{background:var(--seal-soft);color:var(--seal)}
-.td-item .crit{margin-top:6px;font-size:11.5px;color:var(--muted)}
-.td-item .crit div{margin-top:2px}
-.td-item .crit .no{color:var(--seal)}
-.td-item .sugg{margin-top:6px;font-size:12px;background:var(--surface2);border-radius:7px;padding:7px 9px}
-.td-item a{color:var(--accent);word-break:break-all}
+.badge-review{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.badge-bad{display:inline-block;font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:20px;font-weight:700;background:var(--seal-soft);color:var(--seal)}
+.td-body{padding:0 14px 12px;border-top:1px solid var(--line)}
+.td-body .crit{margin-top:8px;font-size:11.5px;color:var(--muted)}
+.td-body .crit div{margin-top:3px}
+.td-body .crit .no{color:var(--seal)}
+.td-body .sugg{margin-top:8px;font-size:12px;background:var(--surface2);border-radius:7px;padding:7px 9px}
+.td-body a{color:var(--accent);word-break:break-all;font-size:11.5px;display:block;margin-top:8px}
 .td-empty{color:var(--muted);font-size:13px;padding:10px 0}
 .td-note{font-size:12px;color:var(--muted);margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
 </style>
@@ -38,13 +47,17 @@
     <h1 style="font-size:20px">📊 教師後台 — 即時作業掃描</h1>
     <a href="index.html" style="margin-left:auto;color:var(--muted);font-size:13px">← 回學員頁面</a>
   </div>
-  <div class="td-cols">
-    <div class="td-col"><h2>模組1 STAR提示語</h2><div id="colPractice"></div></div>
-    <div class="td-col"><h2>模組2 NotebookLM</h2><div id="colShare2"></div></div>
-    <div class="td-col"><h2>模組3 AI海報</h2><div id="colShare3"></div></div>
+  <div class="td-tabs" id="tdTabs">
+    <button class="td-tab active" data-tab="practice_log">模組1 STAR提示語<span class="cnt" id="cntPractice"></span></button>
+    <button class="td-tab" data-tab="share2">模組2 NotebookLM<span class="cnt" id="cntShare2"></span></button>
+    <button class="td-tab" data-tab="share3">模組3 AI海報<span class="cnt" id="cntShare3"></span></button>
   </div>
+  <div class="td-panel" id="panel-practice_log"><div id="colPractice"></div></div>
+  <div class="td-panel" id="panel-share2" hidden><div id="colShare2"></div></div>
+  <div class="td-panel" id="panel-share3" hidden><div id="colShare3"></div></div>
   <div class="td-note">
-    此頁只顯示掃描結果，不會自動觸發掃描。掃描由本機執行 <code>screen_submissions.py</code>（或背景watcher）完成後寫回Firebase，這頁即時反映最新結果。
+    點每一則可展開看完整掃描細節（連結／評分項目／建議）。🔍待複查＝格式已確認正確，但內容是系統技術上讀不到的類型（ChatGPT/Gemini/NotebookLM分享頁），需要妳親自開連結看。⚠️讀取失敗＝連結本身可能有問題（打不開／不是網址）。<br>
+    此頁只顯示掃描結果，不會自動觸發掃描。掃描由本機背景watcher完成後寫回Firebase，這頁即時反映最新結果。
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -65,26 +78,49 @@ function escapeHtml(s){
 }
 function starsHtml(n){ n = Math.max(0, Math.min(5, Number(n)||0)); return '⭐'.repeat(n) + '☆'.repeat(5-n); }
 
-function renderColumn(collection, elId) {
+function fetchBadge(fetchStatus) {
+  if (!fetchStatus || fetchStatus === 'ok') return '';
+  if (fetchStatus === 'unreadable_js_app' || fetchStatus === 'requires_google_login') return '<span class="badge-review">🔍待複查</span>';
+  return '<span class="badge-bad">⚠️讀取失敗</span>';
+}
+
+function renderColumn(collection, elId, cntId) {
   db.ref(`${ROOT}/${collection}`).on('value', rawSnap => {
     db.ref(`${ROOT}/screening/${collection}`).on('value', scrSnap => {
       const raw = rawSnap.val() || {};
       const scr = scrSnap.val() || {};
       const el = document.getElementById(elId);
-      const ids = Object.keys(raw).sort((a,b) => (raw[a].updatedAt||0) - (raw[b].updatedAt||0));
+      const cntEl = document.getElementById(cntId);
+      const ids = Object.keys(raw).sort((a,b) => (raw[b].updatedAt||0) - (raw[a].updatedAt||0));
+      if (cntEl) cntEl.textContent = `(${ids.length})`;
       if (!ids.length) { el.innerHTML = '<div class="td-empty">目前還沒有人繳交</div>'; return; }
       el.innerHTML = ids.map((id, i) => {
         const d = raw[id], s = scr[id];
         const overallClass = s ? (s.overall === '完成' ? 'ok' : 'warn') : '';
-        return `<div class="td-item">
-          <span class="nm">#${i+1} ${escapeHtml(d.nickname||'匿名')}</span>
-          ${s ? `<span class="overall ${overallClass}">${escapeHtml(s.overall||'')}</span>` : '<span class="overall warn">尚未掃描</span>'}
-          ${s ? `<div class="stars">${starsHtml(s.stars)}</div>` : ''}
-          <div style="margin-top:4px"><a href="${escapeHtml(d.content||'')}" target="_blank">${escapeHtml(d.content||'')}</a></div>
-          ${s && s.criteria ? `<div class="crit">${s.criteria.map(c => `<div class="${c.pass?'':'no'}">${c.pass?'✓':'✗'} ${escapeHtml(c.name)}：${escapeHtml(c.note||'')}</div>`).join('')}</div>` : ''}
-          ${s && s.suggestion ? `<div class="sugg">💡 ${escapeHtml(s.suggestion)}</div>` : ''}
-        </div>`;
+        return `<details class="td-item">
+          <summary>
+            <span class="nm">${escapeHtml(d.nickname||'匿名')}</span>
+            ${s ? `<span class="overall ${overallClass}">${escapeHtml(s.overall||'')}</span>` : '<span class="overall warn">尚未掃描</span>'}
+            ${s ? `<span class="stars">${starsHtml(s.stars)}</span>` : ''}
+            ${s ? fetchBadge(s.fetchStatus) : ''}
+          </summary>
+          <div class="td-body">
+            <a href="${escapeHtml(d.content||'')}" target="_blank">${escapeHtml(d.content||'')}</a>
+            ${s && s.criteria ? `<div class="crit">${s.criteria.map(c => `<div class="${c.pass?'':'no'}">${c.pass?'✓':'✗'} ${escapeHtml(c.name)}：${escapeHtml(c.note||'')}</div>`).join('')}</div>` : ''}
+            ${s && s.suggestion ? `<div class="sugg">💡 ${escapeHtml(s.suggestion)}</div>` : ''}
+          </div>
+        </details>`;
       }).join('');
+    });
+  });
+}
+
+function initTabs() {
+  const tabs = document.querySelectorAll('.td-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.td-panel').forEach(p => { p.hidden = (p.id !== `panel-${tab.dataset.tab}`); });
     });
   });
 }
@@ -105,9 +141,10 @@ function initGate() {
 
 document.addEventListener('DOMContentLoaded', () => {
   initGate();
-  renderColumn('practice_log', 'colPractice');
-  renderColumn('share2', 'colShare2');
-  renderColumn('share3', 'colShare3');
+  initTabs();
+  renderColumn('practice_log', 'colPractice', 'cntPractice');
+  renderColumn('share2', 'colShare2', 'cntShare2');
+  renderColumn('share3', 'colShare3', 'cntShare3');
 });
 </script>
 </body>

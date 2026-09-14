@@ -137,6 +137,10 @@ section{margin-top:clamp(30px,5vw,46px)}
   .rperson .task{grid-area:task;justify-self:end}
 }
 
+.fb-note{margin-top:8px;font-size:12px;line-height:1.5;padding:8px 10px;border-radius:8px}
+.fb-note.fb-info{background:var(--accent-soft);color:var(--accent)}
+.fb-note.fb-warn{background:var(--seal-soft);color:var(--seal)}
+
 .reslinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .reslink{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:9px;padding:9px 14px;text-decoration:none;flex:1;min-width:180px}
 .reslink .ic{font-size:16px}
