@@ -313,6 +313,17 @@ function setupJoin() {
   });
 }
 
+function initModuleProgress() {
+  const btns = document.querySelectorAll('.modbtn[data-m]');
+  if (!btns.length) return;
+  db.ref(`${ROOT}/roster/${myId}/progress`).on('value', snap => {
+    const prog = snap.val() || {};
+    btns.forEach(btn => {
+      btn.classList.toggle('on', !!prog[btn.dataset.m]);
+    });
+  });
+}
+
 function setupMarkDone() {
   document.querySelectorAll('.modbtn[data-m]').forEach(btn => {
     const m = btn.dataset.m;
@@ -533,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initWallPage();
   setupJoin();
   if (document.body.dataset.module) setupMarkDone(); // 只在模組頁綁「標記完成」，index的模組卡是純導覽連結
+  initModuleProgress(); // index/模組頁的導覽按鈕都依進度顯示實心樣式
   setupShareBox('practice_log', 'ownPromptInput', 'btnOwnPrompt', 'ownPromptStatus');
   setupShareBox('share2', 'shareInput2', 'btnShare2', 'shareStatus2');
   setupShareBox('share3', 'shareInput3', 'btnShare3', 'shareStatus3');
