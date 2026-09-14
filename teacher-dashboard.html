@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=10">
+<link rel="stylesheet" href="shared.css?v=11">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -33,6 +33,26 @@
 .td-body a{color:var(--accent);word-break:break-all;font-size:11.5px;display:block;margin-top:8px}
 .td-empty{color:var(--muted);font-size:13px;padding:10px 0}
 .td-note{font-size:12px;color:var(--muted);margin-top:20px;border-top:1px solid var(--line);padding-top:14px}
+.ov-head{font-size:14px;font-weight:700;margin:4px 0 8px}
+.overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:16px}
+.ov-card{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+.ov-card .n{font-family:var(--mono);font-weight:700;font-size:20px;color:var(--accent)}
+.ov-card .l{font-size:11px;color:var(--muted);margin-top:2px}
+.ov-card.live .n{color:var(--ok)}
+.ov-card.idle .n{color:var(--muted)}
+.ov-card.offline .n{color:var(--seal)}
+.mod-bars{display:grid;gap:7px;margin-bottom:16px}
+.mod-bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
+.mod-bar-row .lb{width:88px;flex:0 0 auto;color:var(--muted)}
+.mod-bar-track{flex:1;height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.mod-bar-fill{height:100%;background:var(--accent);border-radius:6px}
+.mod-bar-row .ct{width:76px;flex:0 0 auto;text-align:right;font-family:var(--mono);color:var(--muted)}
+.complete-hist{display:flex;gap:6px;margin-bottom:20px;align-items:flex-end}
+.hist-bar{flex:1;text-align:center}
+.hist-bar .bar{display:flex;align-items:flex-end;justify-content:center;height:60px}
+.hist-bar .bar-fill{width:100%;background:var(--accent-soft);border:1px solid var(--accent);border-radius:6px 6px 0 0;min-height:2px}
+.hist-bar .n{font-family:var(--mono);font-size:11px;margin-top:4px;color:var(--ink)}
+.hist-bar .lb{font-size:10px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -47,6 +67,12 @@
     <h1 style="font-size:20px">📊 教師後台 — 即時作業掃描</h1>
     <a href="index.html" style="margin-left:auto;color:var(--muted);font-size:13px">← 回學員頁面</a>
   </div>
+  <div class="ov-head">👥 學員使用狀況</div>
+  <div class="overview" id="ovCards"></div>
+  <div class="ov-head">📈 各模組完成度</div>
+  <div class="mod-bars" id="modBars"></div>
+  <div class="ov-head">🎯 完成幾項模組的人數分布</div>
+  <div class="complete-hist" id="completeHist"></div>
   <div class="td-tabs" id="tdTabs">
     <button class="td-tab active" data-tab="practice_log">模組1 STAR提示語<span class="cnt" id="cntPractice"></span></button>
     <button class="td-tab" data-tab="share2">模組2 NotebookLM<span class="cnt" id="cntShare2"></span></button>
@@ -158,6 +184,52 @@ function initDashSort() {
   });
 }
 
+const PRESENCE_IDLE_MS = 2 * 60 * 1000;
+const PRESENCE_OFFLINE_MS = 10 * 60 * 1000;
+const MOD_NAMES = { 1: '模組1 STAR', 2: '模組2 NotebookLM', 3: '模組3 AI海報', 4: '模組4 反思' };
+
+function renderOverview(roster) {
+  const docs = Object.values(roster || {});
+  const total = docs.length;
+  let live = 0, idle = 0, offline = 0;
+  const modCount = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  const histCount = { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 };
+  const now = Date.now();
+  docs.forEach(d => {
+    const since = now - (d.updatedAt || 0);
+    if (since < PRESENCE_IDLE_MS) live++;
+    else if (since < PRESENCE_OFFLINE_MS) idle++;
+    else offline++;
+    const prog = d.progress || {};
+    let doneCount = 0;
+    [1, 2, 3, 4].forEach(m => { if (prog[m]) { modCount[m]++; doneCount++; } });
+    histCount[doneCount]++;
+  });
+
+  const ovEl = document.getElementById('ovCards');
+  if (ovEl) ovEl.innerHTML = `
+    <div class="ov-card"><div class="n">${total}</div><div class="l">已加入</div></div>
+    <div class="ov-card live"><div class="n">${live}</div><div class="l">●上線</div></div>
+    <div class="ov-card idle"><div class="n">${idle}</div><div class="l">◐沒在動作</div></div>
+    <div class="ov-card offline"><div class="n">${offline}</div><div class="l">○已離線</div></div>
+  `;
+
+  const barsEl = document.getElementById('modBars');
+  if (barsEl) barsEl.innerHTML = [1, 2, 3, 4].map(m => {
+    const c = modCount[m];
+    const pct = total ? Math.round(c / total * 100) : 0;
+    return `<div class="mod-bar-row"><span class="lb">${MOD_NAMES[m]}</span><div class="mod-bar-track"><div class="mod-bar-fill" style="width:${pct}%"></div></div><span class="ct">${c}/${total}（${pct}%）</span></div>`;
+  }).join('');
+
+  const histEl = document.getElementById('completeHist');
+  const maxHist = Math.max(1, ...Object.values(histCount));
+  if (histEl) histEl.innerHTML = [0, 1, 2, 3, 4].map(n => {
+    const c = histCount[n];
+    const h = Math.round(c / maxHist * 56) + 2;
+    return `<div class="hist-bar"><div class="bar"><div class="bar-fill" style="height:${h}px"></div></div><div class="n">${c}</div><div class="lb">完成${n}項</div></div>`;
+  }).join('');
+}
+
 function initTabs() {
   const tabs = document.querySelectorAll('.td-tab');
   tabs.forEach(tab => {
@@ -189,6 +261,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderColumn('practice_log', 'colPractice', 'cntPractice');
   renderColumn('share2', 'colShare2', 'cntShare2');
   renderColumn('share3', 'colShare3', 'cntShare3');
+  let lastRoster = {};
+  db.ref(`${ROOT}/roster`).on('value', snap => { lastRoster = snap.val() || {}; renderOverview(lastRoster); });
+  setInterval(() => renderOverview(lastRoster), 30000); // 上線/離線狀態隨時間變化，定期重算
 });
 </script>
 </body>
