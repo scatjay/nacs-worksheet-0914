@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>115A02 警佐晉升警正 AI實作</title>
-<link rel="stylesheet" href="shared.css?v=5">
+<link rel="stylesheet" href="shared.css?v=6">
 </head>
 <body>
 <div id="gate" hidden>
@@ -48,6 +48,11 @@
       <button class="modbtn" data-m="2" onclick="location.href='module2.html'"><span class="chk"></span><span class="lb">模組2<small>NotebookLM（點我前往）</small></span></button>
       <button class="modbtn" data-m="3" onclick="location.href='module3.html'"><span class="chk"></span><span class="lb">模組3<small>AI宣傳海報（點我前往）</small></span></button>
       <button class="modbtn" data-m="4" onclick="location.href='module4.html'"><span class="chk"></span><span class="lb">模組4<small>反思與收穫（點我前往）</small></span></button>
+    </div>
+    <div class="sort-row" id="rosterSortRow">
+      <button class="sortbtn active" data-sort="recent">🕐 最新動態</button>
+      <button class="sortbtn" data-sort="modules">✅ 完成單元數</button>
+      <button class="sortbtn" data-sort="elapsed">⏱️ 上線時間</button>
     </div>
     <div class="session-grid">
       <div class="roster-box">
@@ -112,6 +117,6 @@ function QRCode(el, opts) {
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="shared.js?v=8"></script>
+<script src="shared.js?v=9"></script>
 </body>
 </html>

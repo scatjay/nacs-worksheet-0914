@@ -195,10 +195,21 @@ function statsHtml(docs) {
   `).join('');
 }
 
+let rosterSortMode = 'recent';
+
+function progCount(d) { return Object.keys(d.progress||{}).length; }
+function onlineMs(d) { return Date.now() - (d.joinedAt || d.updatedAt || 0); }
+
+const ROSTER_SORTERS = {
+  recent: (a, b) => (b.updatedAt||0) - (a.updatedAt||0),
+  modules: (a, b) => progCount(b) - progCount(a) || (b.updatedAt||0) - (a.updatedAt||0),
+  elapsed: (a, b) => onlineMs(b) - onlineMs(a),
+};
+
 function renderRoster(data) {
   const docs = data ? Object.values(data) : [];
   lastRosterDocs = docs;
-  docs.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+  docs.sort(ROSTER_SORTERS[rosterSortMode] || ROSTER_SORTERS.recent);
   const am = docs.filter(d => d.session !== 'pm');
   const pm = docs.filter(d => d.session === 'pm');
 
@@ -232,8 +243,21 @@ function docsOf(val) {
   return val ? Object.values(val).sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0)) : [];
 }
 
+let lastRosterRaw = null;
+
+function initSortControls() {
+  const row = document.getElementById('rosterSortRow');
+  if (!row) return;
+  row.querySelectorAll('.sortbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      rosterSortMode = btn.dataset.sort;
+      row.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b === btn));
+      if (lastRosterRaw) renderRoster(lastRosterRaw);
+    });
+  });
+}
+
 function initListeners() {
-  let lastRosterRaw = null;
   db.ref(`${ROOT}/roster`).on('value', snap => { lastRosterRaw = snap.val(); renderRoster(lastRosterRaw); renderModuleCount(lastRosterRaw); });
   setInterval(() => { if (lastRosterRaw) renderRoster(lastRosterRaw); }, 30000);
   db.ref(`${ROOT}/reflections`).on('value', snap => { const docs = docsOf(snap.val()); renderPagedWall('reflectWall', docs, reflectCardHtml, '還沒有人填寫'); updateTeaserCount('reflectWallCount', docs.length); });
@@ -463,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGate();
   initQR();
   initListeners();
+  initSortControls();
   initWallPage();
   setupJoin();
   if (document.body.dataset.module) setupMarkDone(); // 只在模組頁綁「標記完成」，index的模組卡是純導覽連結
