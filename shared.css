@@ -117,17 +117,22 @@ section{margin-top:clamp(30px,5vw,46px)}
 .qrtxt{font-size:13px;color:var(--muted);line-height:1.6}
 .qrtxt b{color:var(--ink);font-size:14px}
 @media(max-width:480px){.qrbox{flex-direction:column;align-items:flex-start}}
-.roster-list{margin-top:14px;display:grid;gap:8px}
-.rperson{display:grid;grid-template-columns:1fr 90px 1fr 70px;gap:10px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px}
+.roster-list{margin-top:14px;display:grid;gap:5px}
+.rperson{display:grid;grid-template-columns:1fr 90px 1fr 70px;gap:8px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:11.5px;line-height:1.3}
 .rperson>*{min-width:0}
 .rperson .name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rperson .unit{color:var(--muted);font-family:var(--mono);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rperson .task{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.rperson .unit{color:var(--muted);font-family:var(--mono);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rperson .task{font-family:var(--mono);font-size:10px;color:var(--accent)}
 .rperson .ans{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty-note{color:var(--muted);font-size:13px;text-align:center;padding:16px 0}
-.status-pill{font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:20px}
+.status-pill{font-family:var(--mono);font-size:9px;padding:0 6px;border-radius:20px}
 .status-pill.live{background:var(--ok-soft);color:var(--ok)}
-@media(max-width:640px){.rperson{grid-template-columns:1fr;gap:2px}}
+@media(max-width:640px){
+  .rperson{grid-template-columns:1fr auto;grid-template-areas:"name name" "unit task";gap:1px 8px;padding:4px 8px}
+  .rperson .name{grid-area:name}
+  .rperson .unit{grid-area:unit}
+  .rperson .task{grid-area:task;justify-self:end}
+}
 
 .reslinks{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .reslink{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:9px;padding:9px 14px;text-decoration:none;flex:1;min-width:180px}
