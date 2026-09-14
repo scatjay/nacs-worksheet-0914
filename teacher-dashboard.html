@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=8">
+<link rel="stylesheet" href="shared.css?v=9">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -92,7 +92,8 @@ function renderColumn(collection, elId, cntId) {
       const el = document.getElementById(elId);
       const cntEl = document.getElementById(cntId);
       const ids = Object.keys(raw).sort((a,b) => (raw[b].updatedAt||0) - (raw[a].updatedAt||0));
-      if (cntEl) cntEl.textContent = `(${ids.length})`;
+      const studentCount = new Set(ids.map(id => id.slice(0, id.lastIndexOf('_')))).size;
+      if (cntEl) cntEl.textContent = `${studentCount}人／${ids.length}件`;
       if (!ids.length) { el.innerHTML = '<div class="td-empty">目前還沒有人繳交</div>'; return; }
       el.innerHTML = ids.map((id, i) => {
         const d = raw[id], s = scr[id];
