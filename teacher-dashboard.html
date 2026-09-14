@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>教師後台 · 115A02</title>
-<link rel="stylesheet" href="shared.css?v=13">
+<link rel="stylesheet" href="shared.css?v=14">
 <style>
 .td-wrap{max-width:760px;margin:0 auto;padding:24px 20px 80px}
 .td-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
@@ -92,7 +92,8 @@
   <div class="td-panel" id="panel-share3" hidden><div id="colShare3"></div></div>
   <div class="td-note">
     點每一則可展開看完整掃描細節（連結／評分項目／建議）。🔍待複查＝格式已確認正確，但內容是系統技術上讀不到的類型（ChatGPT/Gemini/NotebookLM分享頁），需要妳親自開連結看。⚠️讀取失敗＝連結本身可能有問題（打不開／不是網址）。<br>
-    此頁只顯示掃描結果，不會自動觸發掃描。掃描由本機背景watcher完成後寫回Firebase，這頁即時反映最新結果。
+    此頁只顯示掃描結果，不會自動觸發掃描。掃描由本機背景watcher完成後寫回Firebase，這頁即時反映最新結果。<br>
+    最上方「☀️上午場／🌇下午場」切換會同時套用到下面三個模組的繳交列表：每筆繳交依繳交者裝置對應到roster裡的場次分類，判斷不出場次的預設歸上午場。
   </div>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -136,13 +137,19 @@ function sortIds(ids, raw, scr) {
   return ids.sort((a,b) => (raw[b].updatedAt||0) - (raw[a].updatedAt||0));
 }
 
+function deviceSession(id) {
+  const deviceId = id.slice(0, id.lastIndexOf('_'));
+  const entry = lastRoster[deviceId];
+  return entry && entry.session === 'pm' ? 'pm' : 'am'; // roster裡沒有這個裝置id(理論上不該發生)或沒填session，預設歸上午場
+}
+
 function renderList(collection, elId, cntId) {
   const data = lastData[collection];
   if (!data) return;
   const { raw, scr } = data;
   const el = document.getElementById(elId);
   const cntEl = document.getElementById(cntId);
-  const ids = sortIds(Object.keys(raw), raw, scr);
+  const ids = sortIds(Object.keys(raw).filter(id => deviceSession(id) === overviewSession), raw, scr);
   const studentCount = new Set(ids.map(id => id.slice(0, id.lastIndexOf('_')))).size;
   if (cntEl) cntEl.textContent = `${studentCount}人／${ids.length}件`;
   if (!ids.length) { el.innerHTML = '<div class="td-empty">目前還沒有人繳交</div>'; return; }
@@ -284,6 +291,9 @@ function initSessionToggle() {
       overviewSession = btn.dataset.session;
       row.querySelectorAll('.sortbtn').forEach(b => b.classList.toggle('active', b === btn));
       renderOverview(lastRoster);
+      renderList('practice_log', 'colPractice', 'cntPractice');
+      renderList('share2', 'colShare2', 'cntShare2');
+      renderList('share3', 'colShare3', 'cntShare3');
     });
   });
 }
@@ -296,7 +306,14 @@ document.addEventListener('DOMContentLoaded', () => {
   renderColumn('practice_log', 'colPractice', 'cntPractice');
   renderColumn('share2', 'colShare2', 'cntShare2');
   renderColumn('share3', 'colShare3', 'cntShare3');
-  db.ref(`${ROOT}/roster`).on('value', snap => { lastRoster = snap.val() || {}; renderOverview(lastRoster); });
+  db.ref(`${ROOT}/roster`).on('value', snap => {
+    lastRoster = snap.val() || {};
+    renderOverview(lastRoster);
+    // roster決定每筆繳交屬於上午/下午場，roster資料到齊後重新套用場次篩選
+    renderList('practice_log', 'colPractice', 'cntPractice');
+    renderList('share2', 'colShare2', 'cntShare2');
+    renderList('share3', 'colShare3', 'cntShare3');
+  });
   setInterval(() => renderOverview(lastRoster), 30000); // 上線/離線狀態隨時間變化，定期重算
 });
 </script>
